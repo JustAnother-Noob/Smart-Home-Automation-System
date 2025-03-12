@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="login-form">
+            <div class="form-content">
+                <label for="email">Email:</label>
+                <input type="email" placeholder="Enter Email" id="email" name="email">
+                <div class="login-error" id="email-error">Enter an email</div>
+            </div>
+            <div class="form-content">
+                <label for="password">Password:</label>
+                <input type="password" placeholder="Enter Password" id="password" name="password">
+                <div class="login-error" id="password-error">Enter a password</div>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async function(event){
+            event.preventDefault();
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            const emailError = document.getElementById('email-error');
+            const passwordError = document.getElementById('password-error');
+            let hasError = false;
+
+            // Check if email is empty
+            if (email === '') {
+                emailError.style.display = 'block';
+                hasError = true;
+            } else {
+                emailError.style.display = 'none';
+            }
+
+            // Check if password is empty
+            if (password === '') {
+                passwordError.style.display = 'block';
+                hasError = true;
+            } else {
+                passwordError.style.display = 'none';
+            }
+
+            // If there are errors, prevent form submission
+            if (hasError) {
+                return;
+            }
+
+            // Send the form data to the server
+            try{
+                const response = await fetch('http://localhost:5001/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    window.location.href = 'index.html';
+                    alert(data.message);
+                } else {
+                    alert(data.message);
+                    console.error("Error logging in:", data);
+                }
+            }
+            
+            catch(error){
+                alert('Cannot connect to the server');
+                console.error(error);
+            }
+            
+        });
+    </script>
+</body>
+</html>
