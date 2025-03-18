@@ -4,70 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .signup-container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .error-message {
-            color: red;
-            margin-top: 10px;
-            text-align: center;
-        }
-        .success-message {
-            color: green;
-            margin-top: 10px;
-            text-align: center;
-        }
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="signupstyle.css">
 </head>
 <body>
     <div class="signup-container">
@@ -110,7 +47,7 @@
             }
 
             try {
-                const response = await fetch('http://localhost:5001/signup', { // Replace with your server's URL if different
+                const response = await fetch('http://localhost:5001/signup', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -121,16 +58,16 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    signupMessage.textContent = data.message; // Display success message
-                    signupMessage.className = 'success-message'; // Change class for green color
-                    signupForm.reset(); // Clear the form
-                    // Optionally, redirect to the login page after a short delay
+                    signupMessage.textContent = data.message;
+                    signupMessage.className = 'success-message';
+                    signupForm.reset(); // Clearing form
+                    // Redirecting to login page
                     setTimeout(() => {
                         window.location.href = 'login.html';
                     }, 1500);
                 } else {
                     signupMessage.textContent = data.message || 'Sign up failed.';
-                    signupMessage.className = 'error-message'; // Ensure it's the error class
+                    signupMessage.className = 'error-message';
                 }
             } catch (error) {
                 console.error('Error signing up:', error);

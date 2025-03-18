@@ -4,18 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Home Automation System</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        nav {
+            background-color: #222;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1em 2em;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin: 0 1em;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #1e90ff;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2em;
+            padding: 2em;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        section {
+            background: #fff;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            background-color: #222;
+            color: #fff;
+            text-align: center;
+            padding: 1em;
+            position: relative;
+            margin-top: 2em;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to Smart Home Automation System</h1>
-    </header>
     <nav>
+        <h1>Smart Home</h1>
         <ul>
             <li><a href="#home">Home</a></li>
             <li><a href="#features">Features</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li><a href="login.html">Login</a></li>
         </ul>
     </nav>
     <main>
@@ -37,7 +100,7 @@
         </section>
     </main>
     <footer>
-        <p>&copy; 2023 Smart Home Automation System. All rights reserved.</p>
+        <p>&copy; 2025 Smart Home Automation System. All rights reserved.</p>
     </footer>
 </body>
 </html>
