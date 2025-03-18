@@ -12,12 +12,17 @@ app.use(cors());
 app.use(express.json());
 
 // connecting server to mongodb
-const dbURI = 'mongodb+srv://no0ne:vv9ooGDdPKhBEwUp@smart-home-automation-s.ikhet.mongodb.net/?retryWrites=true&w=majority&appName=Smart-Home-Automation-System';
-
-//using mongoose to connect to mongodb
+const dbURI = 'mongodb+srv://no0ne:vv9ooGDdPKhBEwUp@smart-home-automation-s.ikhet.mongodb.net/smart-homeDB?retryWrites=true&w=majority&appName=Smart-Home-Automation-System';
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB Atlas!'))
-  .catch((err) => console.error('Failed to connect to MongoDB Atlas:', err));
+    .then(() => console.log("✅ Connected to MongoDB Atlas!"))
+    .catch(err => console.error("❌ MongoDB Connection Error:", err));
+
+  const testUser = new User({ email: "manualtest@test.com", password: "hashedpassword" });
+testUser.save()
+  .then(() => console.log("Test user manually saved"))
+  .catch(err => console.error("Error saving test user:", err));
+
+  console.log("Mongoose Model Collection Name:", User.collection.name);
 
 //---------------------- Register---------------------------------------------------
 

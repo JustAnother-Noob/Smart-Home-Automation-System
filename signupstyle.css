@@ -69,3 +69,44 @@ button:hover {
     background: #f8f9fa;
     border-radius: 4px;
 }
+
+.show-password {
+    background: none;
+    border: none;
+    color: blue;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.pwd-container {
+    position: relative;
+    width: 100%;
+}
+#password, #confirmPassword {
+    width: 100%;
+    padding: 10px;
+    padding-right: 40px; /* Ensure the padding remains constant for both */
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+#show-pwd, #show-confirm-pwd {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 20px; /* Adjust size of the icon */
+    height: 20px;
+}
+
+.pwd-container {
+    position: relative;
+    width: 100%;
+}
+
+.pwd-container input {
+    width: 100%;
+    padding-right: 40px; /* Keep padding-right to accommodate the icon */
+}
