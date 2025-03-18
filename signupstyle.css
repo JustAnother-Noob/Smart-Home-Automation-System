@@ -60,3 +60,12 @@ button:hover {
     text-align: center;
     margin-top: 20px;
 }
+.error-message { color: #dc3545; margin-top: 5px; }
+.success-message { color: #28a745; margin-top: 5px; }
+.password-rules {
+    font-size: 0.9em;
+    margin: 10px 0;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <link rel="stylesheet" href="signupstyle.css">
 </head>
+
 <body>
     <div class="signup-container">
         <h2>Sign Up</h2>
@@ -13,18 +15,30 @@
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
+                <div id="emailError" class="error-message"></div>
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
+                <div id="passwordError" class="error-message"></div>
+                <div class="password-rules">
+                    Password must contain:
+                    <ul>
+                        <li id="length">≥ 8 characters</li>
+                        <li id="uppercase">Uppercase letter</li>
+                        <li id="lowercase">Lowercase letter</li>
+                        <li id="number">Number</li>
+                        <li id="special">Special character</li>
+                    </ul>
+                </div>
             </div>
             <div class="form-group">
                 <label for="confirmPassword">Confirm Password:</label>
                 <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <div id="confirmError" class="error-message"></div>
             </div>
             <button type="submit">Sign Up</button>
         </form>
-        <div id="signupMessage" class="error-message"></div>
         <div class="login-link">
             Already have an account? <a href="login.html">Log in</a>
         </div>
@@ -32,19 +46,101 @@
 
     <script>
         const signupForm = document.getElementById('signupForm');
-        const signupMessage = document.getElementById('signupMessage');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const confirmError = document.getElementById('confirmError');
 
+        // ********************** Validate Email with Regex **********************
+        const validateEmail = (email) => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        };
+
+        email.addEventListener('input', () => {
+            const isEmailValid = validateEmail(email.value);
+            if (!isEmailValid) {
+                email.style.borderColor = 'red';
+                emailError.textContent = 'Invalid email address.';
+            } else {
+                email.style.borderColor = 'green';
+                emailError.textContent = '';
+            }
+        });
+
+        // ********************** Validate Password with Regex **********************
+        const validatePassword = (password) => {
+            const requirements = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /\d/.test(password),
+                special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+            };
+            return requirements;
+        };
+
+        password.addEventListener('input', () => {
+            const requirements = validatePassword(password.value);
+            const isPasswordValid = Object.values(requirements).every(Boolean);
+
+            if (!isPasswordValid) {
+                password.style.borderColor = 'red';
+                passwordError.textContent = 'Password does not meet requirements.';
+            } else {
+                password.style.borderColor = 'green';
+                passwordError.textContent = '';
+            }
+            Object.keys(requirements).forEach((requirement) => {
+                const element = document.getElementById(requirement);
+                element.style.color = requirements[requirement] ? 'green' : 'red';
+            });
+        });
+
+        confirmPassword.addEventListener('input', () => {
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.style.borderColor = 'red';
+                confirmError.textContent = 'Passwords do not match.';
+            } else {
+                confirmPassword.style.borderColor = 'green';
+                confirmError.textContent = '';
+            }
+        });
+
+
+        // ********************** Submit Form **********************
         signupForm.addEventListener('submit', async (event) => {
             event.preventDefault(); // Prevent the default form submission
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+            // ********************** Client Validation **********************
+            const emailValid = validateEmail(email.value);
+            const passwordRequirements = validatePassword(password.value); // Corrected this line
+            const passwordsMatch = password.value === confirmPassword.value;
+            const isPasswordValid = Object.values(passwordRequirements).every(Boolean); // Check if all requirements are met
 
-            if (password !== confirmPassword) {
-                signupMessage.textContent = "Passwords do not match.";
+
+
+            if (!emailValid) {
+                document.getElementById('emailError').textContent = 'Invalid email address.';
+                email.style.borderColor = 'red';
                 return;
             }
+
+            if (!isPasswordValid) {
+                document.getElementById('passwordError').textContent = 'Password does not meet requirements';
+                password.style.borderColor = 'red';
+                return;
+            }
+
+            if (!passwordsMatch) {
+                document.getElementById('confirmError').textContent = 'Passwords do not match';
+                confirmPassword.style.borderColor = 'red';
+                return;
+            }
+
+
 
             try {
                 const response = await fetch('http://localhost:5001/signup', {
@@ -52,29 +148,31 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email, password }),
+                    body: JSON.stringify({ email: email.value, password: password.value }),
                 });
 
                 const data = await response.json();
-
+                if (response.status === 400 && data.type === 'password') {
+                    Object.keys(data.requirements).forEach(requirement => {
+                        const element = document.getElementById(requirement);
+                        element.style.color = data.requirements[requirement] ? 'green' : 'red';
+                    });
+                    passwordError.textContent = data.message;
+                    password.style.borderColor = 'red';
+                }
                 if (response.ok) {
-                    signupMessage.textContent = data.message;
-                    signupMessage.className = 'success-message';
-                    signupForm.reset(); // Clearing form
-                    // Redirecting to login page
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 1500);
+                    alert(data.message || 'Signup successful!');
+                    window.location.href = 'login.html';
                 } else {
-                    signupMessage.textContent = data.message || 'Sign up failed.';
-                    signupMessage.className = 'error-message';
+                    alert(data.message || 'Sign-up failed.');
                 }
             } catch (error) {
                 console.error('Error signing up:', error);
-                signupMessage.textContent = 'An unexpected error occurred.';
-                signupMessage.className = 'error-message';
+                alert('An unexpected error occurred.');
             }
+
         });
     </script>
 </body>
+
 </html>

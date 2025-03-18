@@ -1,6 +1,6 @@
 #Client-Side
 **Validation:** 
-- email validation using regex and allowing only emails from google, yahoo, proton or others while don't allowing temp emails
+- email validation using regex and don't allowing temp emails
 - Password validation:
 	- client side validation for minimum 8 letters, at least one uppercase, lowercase, number and special character
 	- real time client side validation below pwd box saying which requirement is met and which is not. 
