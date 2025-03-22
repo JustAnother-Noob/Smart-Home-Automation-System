@@ -39,10 +39,18 @@
             const passwordError = document.getElementById('password-error');
             let hasError = false;
 
+            // Check for verification success
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('verified')) {
+    const statusDiv = document.createElement('div');
+    statusDiv.className = 'verification-success';
+    statusDiv.textContent = 'Email verified successfully! You can now login.';
+    document.querySelector('.login-container').prepend(statusDiv);
+}
+
             // Check if email is empty
             if (email 
 // connecting server to mongodb
-const mongoURI = 'mongodb://127.0.0.1:27017/smart_home_auth';
 
 //using mongoose to connect to mongodb
 mongoose.connect(mongoURI, {

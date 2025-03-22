@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification Sent</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .confirmation-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .resend-section {
+            margin-top: 2rem;
+        }
+
+        #resendStatus {
+            margin-top: 1rem;
+        }
+
+        .verification-success {
+            background: #dff0d8;
+            color: #3c763d;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #d6e9c6;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="confirmation-container">
+        <h2>Almost There! Verify Your Email</h2>
+        <p>We've sent a verification link to <span id="userEmail"></span></p>
+        <p>Check your inbox and click the link to complete your registration.</p>
+
+        <div class="resend-section">
+            <p>Didn't receive the email?</p>
+            <button onclick="resendVerification()">Resend Verification Email</button>
+            <div id="resendStatus"></div>
+        </div>
+    </div>
+
+    <script>
+        // Get email from URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const userEmail = urlParams.get('email');
+        document.getElementById('userEmail').textContent = userEmail;
+
+        async function resendVerification() {
+            const statusDiv = document.getElementById('resendStatus');
+            try {
+                const response = await fetch('/api/auth/resend-verification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: userEmail })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    statusDiv.style.color = 'green';
+                    statusDiv.textContent = 'New verification email sent!';
+                } else {
+                    statusDiv.style.color = 'red';
+                    statusDiv.textContent = data.message || 'Error resending email';
+                }
+            } catch (error) {
+                console.error('Resend error:', error);
+                statusDiv.style.color = 'red';
+                statusDiv.textContent = 'Failed to resend verification email';
+            }
+        }
+    </script>
+</body>
+
+</html>

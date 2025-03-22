@@ -9,7 +9,6 @@
 #Server-side
 - Email verification after sign-up
 - Rate-limiting to limit sign-up actions to prevent brute-force
-- Password Hashing
 - Server-side email and password Validation
 - Two-factor-Auth (2FA)
 - Proper error logs
