@@ -51,7 +51,11 @@ const signup = async (req, res) => {
 
     } catch (error) {
         console.error('Signup error:', error);
-        res.status(500).json({ message: 'Server error during registration' });
+        await User.deleteOne({ email: lowerEmail });
+        res.status(500).json({ 
+            message: error.message || 'Registration failed',
+            error: error.message 
+        });
     }
 };
 
