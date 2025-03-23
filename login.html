@@ -1,294 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Smart Living Tech</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --text: #2d3748;
-            --background: #f7fafc;
-            --error: #e53e3e;
-            --success: #48bb78;
-        }
-
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--background);
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .auth-card {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            transition: transform 0.3s ease;
-        }
-
-        .auth-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .logo img {
-            height: 50px;
-        }
-
-        h1 {
-            color: var(--text);
-            font-size: 1.5rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-
-        label {
-            display: block;
-            color: var(--text);
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        input {
-            width: 100%;
-            padding: 0.875rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 0.875rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .submit-btn:hover {
-            background: var(--primary-dark);
-        }
-
-        .submit-btn:disabled {
-            background: #cbd5e0;
-            cursor: not-allowed;
-        }
-
-        .status-message {
-            padding: 0.875rem;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
-            text-align: center;
-            display: none;
-        }
-
-        .status-message.visible {
-            display: block;
-        }
-
-        .success {
-            background: #f0fff4;
-            color: var(--success);
-            border: 1px solid #c6f6d5;
-        }
-
-        .error {
-            background: #fff5f5;
-            color: var(--error);
-            border: 1px solid #fed7d7;
-        }
-
-        .loading-spinner {
-            animation: spin 1s linear infinite;
-            width: 1.5rem;
-            height: 1.5rem;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            display: none;
-        }
-
-        .auth-links {
-            text-align: center;
-            margin-top: 1.5rem;
-            display: flex;
-            gap: 0.75rem;
-            justify-content: center;
-        }
-
-        .auth-links a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .auth-links span {
-            color: #cbd5e0;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 480px) {
-            .auth-card {
-                padding: 1.5rem;
-                margin: 1rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Smart Living Tech</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --text: #2d3748;
+      --background: #f7fafc;
+      --error: #e53e3e;
+      --success: #48bb78;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--background);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .auth-card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      transition: transform 0.3s ease;
+    }
+    .auth-card:hover {
+      transform: translateY(-2px);
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .logo img {
+      height: 50px;
+    }
+    h1 {
+      color: var(--text);
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    label {
+      display: block;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    input {
+      width: 100%;
+      padding: 0.875rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .g-recaptcha {
+      margin-bottom: 1rem;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 0.875rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .submit-btn:hover {
+      background: var(--primary-dark);
+    }
+    .submit-btn:disabled {
+      background: #cbd5e0;
+      cursor: not-allowed;
+    }
+    .status-message {
+      padding: 0.875rem;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+      text-align: center;
+      display: none;
+    }
+    .status-message.visible {
+      display: block;
+    }
+    .success {
+      background: #f0fff4;
+      color: var(--success);
+      border: 1px solid #c6f6d5;
+    }
+    .error {
+      background: #fff5f5;
+      color: var(--error);
+      border: 1px solid #fed7d7;
+    }
+    .loading-spinner {
+      animation: spin 1s linear infinite;
+      width: 1.5rem;
+      height: 1.5rem;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      display: none;
+    }
+    .auth-links {
+      text-align: center;
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+    .auth-links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .auth-links span {
+      color: #cbd5e0;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @media (max-width: 480px) {
+      .auth-card {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+    }
+  </style>
+  <!-- Include reCAPTCHA API -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
-    <div class="auth-card">
-        <div class="logo">
-            <img src="./assets/images/logo.png" alt="Smart Living Tech">
-        </div>
-        
-        <h1>Welcome Back</h1>
-
-        <div id="verificationStatus" class="status-message success" style="display: none;">
-            Email verified successfully! You can now login.
-        </div>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email"
-                    placeholder="Enter your email"
-                    required
-                >
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password"
-                    placeholder="Enter your password"
-                    required
-                >
-            </div>
-
-            <button type="submit" class="submit-btn" id="submitBtn">
-                <span id="btnText">Login</span>
-                <div class="loading-spinner" id="spinner"></div>
-            </button>
-
-            <div class="status-message" id="statusMessage"></div>
-        </form>
-
-        <div class="auth-links">
-            <a href="forgot-password.html">Forgot Password?</a>
-            <span>|</span>
-            <a href="signup.html">Create Account</a>
-        </div>
+  <div class="auth-card">
+    <div class="logo">
+      <img src="./assets/images/logo.png" alt="Smart Living Tech">
     </div>
+    <h1>Welcome Back</h1>
+    <div id="verificationStatus" class="status-message success" style="display: none;">
+      Email verified successfully! You can now login.
+    </div>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email"
+          placeholder="Enter your email"
+          required
+        >
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password"
+          placeholder="Enter your password"
+          required
+        >
+      </div>
+      <!-- reCAPTCHA Widget -->
+      <div class="g-recaptcha"
+           data-sitekey="6LdHU_0qAAAAAPeJGSJhhVigGOoMTRv5peDU9uG4"
+           data-callback="recaptchaSuccess"
+           data-expired-callback="recaptchaExpired"
+           data-error-callback="recaptchaError"></div>
+      <!-- Display reCAPTCHA error if any -->
+      <div id="recaptchaError" style="color: red; font-size: 0.9rem; margin-bottom: 1rem;"></div>
+      
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span id="btnText">Login</span>
+        <div class="loading-spinner" id="spinner"></div>
+      </button>
+      <div class="status-message" id="statusMessage"></div>
+    </form>
+    <div class="auth-links">
+      <a href="forgot-password.html">Forgot Password?</a>
+      <span>|</span>
+      <a href="signup.html">Create Account</a>
+    </div>
+  </div>
 
-    <script>
-        const form = document.getElementById('loginForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const btnText = document.getElementById('btnText');
-        const spinner = document.getElementById('spinner');
-        const statusMessage = document.getElementById('statusMessage');
-        const verificationStatus = document.getElementById('verificationStatus');
+  <script>
+    // Callback functions for reCAPTCHA
+    window.recaptchaSuccess = (token) => {
+      document.getElementById('recaptchaError').textContent = '';
+      // Optionally store the token for later use
+      window.recaptchaToken = token;
+    };
 
-        // Show verification success message if URL param exists
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('verified')) {
-            verificationStatus.style.display = 'block';
-            setTimeout(() => {
-                verificationStatus.style.display = 'none';
-            }, 5000);
-        }
+    window.recaptchaExpired = () => {
+      document.getElementById('recaptchaError').textContent = 'reCAPTCHA expired. Please complete it again.';
+    };
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
+    window.recaptchaError = () => {
+      document.getElementById('recaptchaError').textContent = 'reCAPTCHA encountered an error. Please refresh the page.';
+    };
 
-            // Show loading state
-            btnText.textContent = 'Authenticating...';
-            spinner.style.display = 'inline-block';
-            submitBtn.disabled = true;
-            statusMessage.classList.remove('visible');
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const spinner = document.getElementById('spinner');
+    const statusMessage = document.getElementById('statusMessage');
+    const verificationStatus = document.getElementById('verificationStatus');
 
-            try {
-                const response = await fetch('http://localhost:5001/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
+    // Show verification success message if URL param exists
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('verified')) {
+      verificationStatus.style.display = 'block';
+      setTimeout(() => {
+        verificationStatus.style.display = 'none';
+      }, 5000);
+    }
 
-                const data = await response.json();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      
+      // Retrieve the reCAPTCHA token
+      const recaptchaToken = grecaptcha.getResponse();
+      if (!recaptchaToken) {
+        document.getElementById('recaptchaError').textContent = 'Please complete the security check.';
+        return;
+      }
 
-                if (response.ok) {
-                    statusMessage.textContent = 'Login successful! Redirecting...';
-                    statusMessage.className = 'status-message success visible';
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1500);
-                } else {
-                    statusMessage.textContent = data.message || 'Login failed';
-                    statusMessage.className = 'status-message error visible';
-                }
-            } catch (error) {
-                statusMessage.textContent = 'Connection error. Please try again.';
-                statusMessage.className = 'status-message error visible';
-            } finally {
-                btnText.textContent = 'Login';
-                spinner.style.display = 'none';
-                submitBtn.disabled = false;
-            }
+      // Show loading state
+      btnText.textContent = 'Authenticating...';
+      spinner.style.display = 'inline-block';
+      submitBtn.disabled = true;
+      statusMessage.classList.remove('visible');
+
+      try {
+        const response = await fetch('http://localhost:5001/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, recaptchaToken })
         });
 
-        // Real-time validation
-        document.getElementById('email').addEventListener('input', validateForm);
-        document.getElementById('password').addEventListener('input', validateForm);
+        const data = await response.json();
 
-        function validateForm() {
-            const emailValid = document.getElementById('email').checkValidity();
-            const passwordValid = document.getElementById('password').value.trim().length > 0;
-            
-            if (!emailValid || !passwordValid) {
-                submitBtn.disabled = true;
-                return false;
-            }
-            submitBtn.disabled = false;
-            return true;
+        if (response.ok) {
+          statusMessage.textContent = 'Login successful! Redirecting...';
+          statusMessage.className = 'status-message success visible';
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1500);
+        } else {
+          statusMessage.textContent = data.message || 'Login failed';
+          statusMessage.className = 'status-message error visible';
         }
-    </script>
+      } catch (error) {
+        statusMessage.textContent = 'Connection error. Please try again.';
+        statusMessage.className = 'status-message error visible';
+      } finally {
+        btnText.textContent = 'Login';
+        spinner.style.display = 'none';
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Real-time validation
+    document.getElementById('email').addEventListener('input', validateForm);
+    document.getElementById('password').addEventListener('input', validateForm);
+
+    function validateForm() {
+      const emailValid = document.getElementById('email').checkValidity();
+      const passwordValid = document.getElementById('password').value.trim().length > 0;
+      
+      submitBtn.disabled = !(emailValid && passwordValid);
+      return emailValid && passwordValid;
+    }
+  </script>
 </body>
 </html>
