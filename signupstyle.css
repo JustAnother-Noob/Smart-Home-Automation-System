@@ -86,7 +86,7 @@ button:hover {
 #password, #confirmPassword {
     width: 100%;
     padding: 10px;
-    padding-right: 40px; /* Ensure the padding remains constant for both */
+    padding-right: 40px;
     font-size: 16px;
     box-sizing: border-box;
 }
@@ -108,5 +108,44 @@ button:hover {
 
 .pwd-container input {
     width: 100%;
-    padding-right: 40px; /* Keep padding-right to accommodate the icon */
+    padding-right: 40px;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.loading-overlay.active {
+    display: flex;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Disable form during loading */
+.form-disabled {
+    pointer-events: none;
+    opacity: 0.7;
 }

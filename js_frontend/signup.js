@@ -10,6 +10,9 @@ const termscheckbox = document.getElementById('t&cCheckbox');
 const termsError = document.getElementById('t&cError');
 const showPasswordBtn = document.getElementById('show-pwd');
 const showConfirmPasswordBtn = document.getElementById('show-confirm-pwd');
+const loadingOverlay = document.getElementById('loadingOverlay');
+const submitButton = document.querySelector('#signupForm button[type="submit"]');
+
 
 // ********************** Validate Email with Regex **********************
 const validateEmail = (email) => {
@@ -127,6 +130,10 @@ signupForm.addEventListener('submit', async (event) => {
         document.getElementById('t&cError').textContent = '';
     }
 
+    loadingOverlay.classList.add('active');
+    signupForm.classList.add('form-disabled');
+    submitButton.disabled = true;
+
     try {
         const response = await fetch('http://127.0.0.1:5001/api/auth/signup', {
             method: 'POST',
@@ -149,6 +156,9 @@ signupForm.addEventListener('submit', async (event) => {
             alert(data.message || 'Sign-up failed.');
         }
     } catch (error) {
+        loadingOverlay.classList.remove('active');
+        signupForm.classList.remove('form-disabled');
+        submitButton.disabled = false;
         console.error('Error signing up:', error);
         alert('An unexpected error occurred.');
     } 

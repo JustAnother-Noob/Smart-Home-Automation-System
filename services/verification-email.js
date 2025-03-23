@@ -60,10 +60,10 @@ const sendVerificationEmail = async (email, token) => {
     let transporter;
     try {
         transporter = await createTransporter();
-        const verificationLink = `${CLIENT_URL}/verify-email?token=${token}`;
+        const verificationLink = `${CLIENT_URL}/api/auth/verify-email?token=${token}`;
         
         const mailOptions = {
-            from: `"Your App Name" <${EMAIL_USER}>`,
+            from: `"Smart Living Tech" <${EMAIL_USER}>`,
             to: email,
             subject: 'Verify Your Email Address',
             html: `

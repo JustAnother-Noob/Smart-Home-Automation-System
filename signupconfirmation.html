@@ -62,36 +62,37 @@
     </div>
 
     <script>
-        // Get email from URL query parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const userEmail = urlParams.get('email');
-        document.getElementById('userEmail').textContent = userEmail;
-
         async function resendVerification() {
-            const statusDiv = document.getElementById('resendStatus');
-            try {
-                const response = await fetch('/api/auth/resend-verification', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email: userEmail })
-                });
+    const statusDiv = document.getElementById('resendStatus');
+    statusDiv.textContent = 'Sending...';
+    
+    try {
+        const response = await fetch('/api/auth/resend-verification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                email: new URLSearchParams(window.location.search).get('email') 
+            })
+        });
 
-                const data = await response.json();
-                if (response.ok) {
-                    statusDiv.style.color = 'green';
-                    statusDiv.textContent = 'New verification email sent!';
-                } else {
-                    statusDiv.style.color = 'red';
-                    statusDiv.textContent = data.message || 'Error resending email';
-                }
-            } catch (error) {
-                console.error('Resend error:', error);
-                statusDiv.style.color = 'red';
-                statusDiv.textContent = 'Failed to resend verification email';
-            }
+        const data = await response.json();
+        
+        statusDiv.style.color = response.ok ? 'green' : 'red';
+        statusDiv.textContent = data.message || 'Unknown error';
+
+        if (response.status === 429) {
+            const retryAfter = response.headers.get('Retry-After') || 3600;
+            setTimeout(() => {
+                statusDiv.textContent = 'You may try again now';
+            }, retryAfter * 1000);
         }
+
+    } catch (error) {
+        statusDiv.style.color = 'red';
+        statusDiv.textContent = 'Connection error';
+        console.error('Resend error:', error);
+    }
+}
     </script>
 </body>
 

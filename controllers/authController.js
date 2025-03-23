@@ -3,6 +3,8 @@ const User = require('../server/models/user.models');
 const { generateVerificationToken } = require('../services/token');
 const { sendVerificationEmail } = require('../services/verification-email');
 const { validateEmail, validatePassword } = require('../utils/validators');
+const jwt = require("jsonwebtoken");
+
 
 const signup = async (req, res) => {
     const { email, password } = req.body;
@@ -52,9 +54,9 @@ const signup = async (req, res) => {
     } catch (error) {
         console.error('Signup error:', error);
         await User.deleteOne({ email: lowerEmail });
-        res.status(500).json({ 
+        res.status(500).json({
             message: error.message || 'Registration failed',
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -62,9 +64,11 @@ const signup = async (req, res) => {
 const verifyEmail = async (req, res) => {
     try {
         const { token } = req.query;
-        const { verifyToken } = require('../services/tokenService');
-        const decoded = verifyToken(token);
 
+        // Verify JWT
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Find user with matching token and check expiration
         const user = await User.findOne({
             email: decoded.email,
             verificationToken: token,
@@ -72,53 +76,76 @@ const verifyEmail = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(400).json({ message: 'Invalid or expired token' });
+            return res.redirect(`${CLIENT_URL}/error?type=token_expired`);
         }
 
+        // Update verification status
         user.isVerified = true;
         user.verificationToken = undefined;
         user.tokenExpires = undefined;
         await user.save();
 
-        res.redirect(`${CLIENT_URL}/login.html?verified=true`);
+        res.redirect(`${CLIENT_URL}/signup-verified.html`);
 
     } catch (error) {
-        res.redirect(`${CLIENT_URL}/signupconfirmation.html?error=${encodeURIComponent(error.message)}`);
+        console.error('Verification error:', error);
+        return res.redirect(`${CLIENT_URL}/signup-unverified.html?error=token_expired`);
     }
 };
 
 const resendVerification = async (req, res) => {
-    const { email } = req.body;
-    const lowerEmail = email.toLowerCase();
-
     try {
-        const user = await User.findOne({ email: lowerEmail });
-        
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
+        const { email } = req.body;
+        const lowerEmail = email.toLowerCase();
 
-        if (user.isVerified) {
-            return res.status(400).json({ message: "Email already verified" });
+        // Find unverified user
+        const user = await User.findOne({
+            email: lowerEmail,
+            isVerified: false
+        });
+
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "User not found or already verified"
+            });
         }
 
         // Generate new token
-        const newToken = generateVerificationToken(lowerEmail);
-        
-        // Update user with new token
+        const newToken = jwt.sign(
+            { email: lowerEmail },
+            process.env.JWT_SECRET,
+            { expiresIn: '10m' }
+        );
+
+        // Update user record
         user.verificationToken = newToken;
         user.tokenExpires = Date.now() + 600000; // 10 minutes
         await user.save();
 
-        // Send new verification email
+        // Send new email
         await sendVerificationEmail(lowerEmail, newToken);
 
-        res.json({ message: 'New verification email sent!' });
+        res.json({
+            success: true,
+            message: "New verification email sent"
+        });
+
     } catch (error) {
         console.error('Resend error:', error);
-        res.status(500).json({ message: 'Error resending verification' });
+        res.status(500).json({
+            success: false,
+            message: "Failed to resend verification email"
+        });
     }
 };
+// Delete expired tokens periodically (add to server startup)
+setInterval(async () => {
+    await User.deleteMany({
+        tokenExpires: { $lt: Date.now() },
+        isVerified: false
+    });
+}, 60 * 60 * 1000); // Run hourly
 
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -126,13 +153,13 @@ const login = async (req, res) => {
 
     try {
         const user = await User.findOne({ email: lowerEmail });
-        
+
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
 
         if (!user.isVerified) {
-            return res.status(403).json({ 
+            return res.status(403).json({
                 message: "Please verify your email first"
             });
         }

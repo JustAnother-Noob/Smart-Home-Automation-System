@@ -6,6 +6,6 @@ module.exports = {
     OAUTH_CLIENT_ID: process.env.OAUTH_CLIENT_ID,
     OAUTH_CLIENT_SECRET: process.env.OAUTH_CLIENT_SECRET,
     OAUTH_REFRESH_TOKEN: process.env.OAUTH_REFRESH_TOKEN,
-    CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5500',
-    API_URL: process.env.API_URL || 'http://localhost:5001',
+    CLIENT_URL: process.env.CLIENT_URL || 'http://127.0.0.1:5500',
+    API_URL: process.env.API_URL || 'http://127.0.0.1:5001',
 };

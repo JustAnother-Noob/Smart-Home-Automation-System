@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('../config/db');
@@ -10,9 +10,12 @@ const port = process.env.PORT || 5001;
 // Connect to database
 connectDB();
 
+app.use(express.json());
+
 // Middleware
 app.use(cors({
     origin: 'http://127.0.0.1:5500', // allow from frontend
+    methods: ['GET', 'POST'],
     credentials: true
 }));
 app.use(express.json());
