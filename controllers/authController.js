@@ -49,11 +49,19 @@ const signup = async (req, res) => {
 
         res.status(201).json({
             message: 'OTP sent to your email. Check your inbox.',
-            email: lowerEmail
+            email: lowerEmail,
+            redirect: `/otp-verify?email=${encodeURIComponent(email)}`
         });
 
     } catch (error) {
         console.error('Signup error:', error);
+        if (error.code === 11000) {
+            return res.status(409).json({
+                success: false,
+                field: 'email',
+                message: 'Email already exists'
+            });
+        }
         
         // Cleanup: Remove user if OTP failed to send
         await User.deleteOne({ email: lowerEmail }).catch(cleanupError => {

@@ -10,4 +10,19 @@ const resendLimiter = rateLimit({
     standardHeaders: true
 });
 
-module.exports = resendLimiter;
+const signupLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit each IP to 5 signup requests per window
+    message: {
+        success: false,
+        message: 'Too many signup attempts. Please try again later.'
+    },
+    handler: (req, res, next) => {
+        res.status(429).json({
+            success: false,
+            message: 'Too many attempts. Please try again later.'
+        });
+    }
+});
+
+module.exports = { resendLimiter, signupLimiter };

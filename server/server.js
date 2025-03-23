@@ -31,3 +31,9 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
+
+app.get('/signup', (req, res) => {
+    res.render('signup', {
+        recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY // Pass site key to the view
+    });
+});

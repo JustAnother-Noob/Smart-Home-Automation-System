@@ -1,10 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const resendLimiter = require('../middleware/rateLimit');
+const { validateRecaptcha } = require('../utils/validators');
+const { resendLimiter } = require('../middleware/rateLimit');
+const { signupLimiter } = require('../middleware/rateLimit');
 
 // POST /api/auth/signup
-router.post('/signup', authController.signup);
+console.log('validateRecaptcha:', validateRecaptcha);
+router.post('/signup', signupLimiter, validateRecaptcha, authController.signup);
 
 // routes/authRoutes.js
 router.post('/verify-otp', authController.verifyOTP);

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <link rel="stylesheet" href="signupstyle.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body>
@@ -24,7 +25,7 @@
                     <img id="show-pwd" src="/assets/images/show_pwd.png" alt="Show" />
                 </div>
                 <div id="passwordError" class="error-message"></div>
-                <div class="password-rules">
+                <div class="password-rules" id = "passwordRules">
                     Password must contain:
                     <ul>
                         <li id="length">≥ 8 characters</li>
@@ -48,7 +49,14 @@
                 I agree to the <a href="#">terms and conditions.</a>
             </label>
             <div id="t&cError" class="error-message"></div>
-            <button type="submit">Sign Up</button>
+            <div class="g-recaptcha"
+            data-sitekey="6LdHU_0qAAAAAPeJGSJhhVigGOoMTRv5peDU9uG4"
+            data-callback="recaptchaSuccess"
+            data-expired-callback="recaptchaExpired"
+            data-error-callback="recaptchaError"></div>
+       <div id="recaptchaError" class="error-message"></div>
+       
+               <button type="submit">Sign Up</button>
             <div class="loading-overlay" id="loadingOverlay">
                 <div class="spinner"></div>
                 <p>Creating your account...</p>
@@ -58,7 +66,7 @@
             Already have an account? <a href="login.html">Log in</a>
         </div>
     </div>
-    <script src="./js_frontend/signup.js"></script>
+    <script src="./js_frontend/signup.js" defer></script>
 </body>
 
 </html>

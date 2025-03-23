@@ -31,6 +31,15 @@ email.addEventListener('input', () => {
     }
 });
 
+password.addEventListener('focus', () => {
+    document.getElementById('passwordRules').classList.add('visible');
+});
+
+password.addEventListener('blur', () => {
+    if (!password.value) {
+        document.getElementById('passwordRules').classList.remove('visible');
+    }
+});
 // ********************** Validate Password with Regex **********************
 const validatePassword = (password) => {
     const requirements = {
@@ -92,6 +101,25 @@ showConfirmPasswordBtn.addEventListener('click', () => {
 });
 
 
+email.addEventListener('input', () => {
+    if (validateEmail(email.value)) clearErrors();
+});
+
+password.addEventListener('input', () => {
+    if (validatePassword(password.value)) clearErrors();
+});
+
+function clearErrors() {
+    document.querySelectorAll('.error-message').forEach(el => {
+        el.textContent = '';
+    });
+}
+window.recaptchaSuccess = (token) => {
+    recaptchaVerified = true;
+    document.getElementById('recaptchaError').textContent = '';
+    // Store the token if needed
+    window.recaptchaToken = token;
+};
 
 // ********************** Submit Form **********************
 signupForm.addEventListener('submit', async (event) => {
@@ -129,35 +157,44 @@ signupForm.addEventListener('submit', async (event) => {
     } else {
         document.getElementById('t&cError').textContent = '';
     }
-
-    loadingOverlay.classList.add('active');
-    signupForm.classList.add('form-disabled');
-    submitButton.disabled = true;
-
-    try {
-        const response = await fetch('http://127.0.0.1:5001/api/auth/signup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                email: email.value.toLowerCase(), 
-                password: password.value 
-            })
-        });
-
-        const data = await response.json();
-        
-        if (response.ok) {
-            // Redirect to OTP verification page
-            window.location.href = `otp-verify.html?email=${encodeURIComponent(email.value)}`;
-        } else {
-            alert(data.message || 'Sign-up failed');
-        }
-    } catch (error) {
-        console.error('Signup error:', error);
-        alert('Connection error. Please try again.');
-    } finally {
-        loadingOverlay.classList.remove('active');
-        signupForm.classList.remove('form-disabled');
-        submitButton.disabled = false;
+    const recaptchaToken = grecaptcha.getResponse();
+    
+    if (!recaptchaToken) {
+        document.getElementById('recaptchaError').textContent = 'Please complete the security check.';
+        return;
     }
+
+
+
+loadingOverlay.classList.add('active');
+signupForm.classList.add('form-disabled');
+submitButton.disabled = true;
+
+try {
+    const response = await fetch('http://127.0.0.1:5001/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            email: email.value.toLowerCase(),
+            password: password.value,
+            recaptchaToken        })
+    });
+
+
+    const data = await response.json();
+
+    if (response.ok) {
+        // Redirect to OTP verification page
+        window.location.href = `otp-verify.html?email=${encodeURIComponent(email.value)}`;
+    } else {
+        alert(data.message || 'Sign-up failed');
+    }
+} catch (error) {
+    console.error('Signup error:', error);
+    alert('Connection error. Please try again.');
+} finally {
+    loadingOverlay.classList.remove('active');
+    signupForm.classList.remove('form-disabled');
+    submitButton.disabled = false;
+}
 });

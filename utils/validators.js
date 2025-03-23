@@ -31,4 +31,38 @@ const validatePassword = (password) => {
     };
 };
 
-module.exports = { validateEmail, validatePassword };
+const axios = require('axios');
+const { RECAPTCHA_SECRET_KEY } = require('../config/constants');
+
+const validateRecaptcha = async (req, res, next) => {
+    try {
+        const { recaptchaToken } = req.body;
+        
+        if (!recaptchaToken) {
+            console.log('No reCAPTCHA token received');
+            return res.status(400).json({ /* ... */ });
+        }
+
+        const verificationURL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`;
+        
+        const response = await axios.post(verificationURL);
+        console.log('reCAPTCHA Verification Response:', response.data);
+
+        const { success, hostname } = response.data;
+
+        if (!success) {
+            console.log('reCAPTCHA Verification Failed:', response.data);
+            return res.status(403).json({ /* ... */ });
+        }
+
+        next();
+    } catch (error) {
+        console.error('reCAPTCHA validation error:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Security check failed' 
+        });
+    }
+};
+
+module.exports = { validateEmail, validatePassword, validateRecaptcha };
