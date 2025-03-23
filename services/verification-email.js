@@ -6,7 +6,8 @@ const {
     OAUTH_CLIENT_ID,
     OAUTH_CLIENT_SECRET,
     OAUTH_REFRESH_TOKEN,
-    CLIENT_URL  // Make sure this is in your constants
+    CLIENT_URL,  // Make sure this is in your constants
+    API_URL
 } = require('../config/constants');
 
 const OAuth2 = google.auth.OAuth2;
@@ -55,52 +56,34 @@ const createTransporter = async () => {
         throw error;
     }
 };
-
-const sendVerificationEmail = async (email, token) => {
-    let transporter;
+// services/emailService.js
+const sendOTPEmail = async (email, otp) => {
     try {
-        transporter = await createTransporter();
-        const verificationLink = `${CLIENT_URL}/api/auth/verify-email?token=${token}`;
+        const transporter = await createTransporter();
         
-        const mailOptions = {
+        await transporter.sendMail({
             from: `"Smart Living Tech" <${EMAIL_USER}>`,
             to: email,
-            subject: 'Verify Your Email Address',
+            subject: 'Verify Your Email - OTP Code',
             html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #2563eb;">Email Verification Required</h2>
-                    <p>Please click the button below to verify your email address:</p>
-                    <a href="${verificationLink}" 
-                       style="display: inline-block; padding: 12px 24px; 
-                              background-color: #2563eb; color: white; 
-                              text-decoration: none; border-radius: 4px;
-                              margin: 20px 0;">
-                        Verify Email
-                    </a>
-                    <p style="color: #6b7280; font-size: 0.875rem;">
-                        This link will expire in 10 minutes.<br>
-                        If you didn't request this, please ignore this email.
-                    </p>
+                <div style="font-family: Arial, sans-serif; color: #333;">
+                    <h2 style="color: #4CAF50;">Email Verification</h2>
+                    <p style="font-size: 1.2rem;">Hello,</p>
+                    <p style="font-size: 1.2rem;">To complete your registration, please use the One-Time Password (OTP) below:</p>
+                    <h1 style="font-size: 2.5rem; letter-spacing: 0.2rem; color: #007BFF;">
+                        ${otp}
+                    </h1>
+                    <p style="font-size: 1.2rem;">Please note that this code will expire in <strong>10 minutes</strong>.</p>
+                    <p style="font-size: 1.2rem;">If you did not request this code, please ignore this email.</p>
+                    <p style="font-size: 1.2rem;">Thank you for choosing Smart Living Tech!</p>
                 </div>
-            `,
-            text: `Verify your email: ${verificationLink}\nThis link expires in 10 minutes.`
-        };
-
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent to:', email, 'Message ID:', info.messageId);
-        return true;
-
+            `
+        });
+        
     } catch (error) {
-        console.error('Email sending error details:');
-        console.error('Error code:', error.code);
-        console.error('Command:', error.command);
-        
-        if (error.response) {
-            console.error('SMTP response:', error.response);
-        }
-        
-        throw new Error(`Failed to send verification email: ${error.message}`);
+        console.error('Email error:', error);
+        throw new Error('Failed to send OTP');
     }
 };
 
-module.exports = { sendVerificationEmail };
+module.exports = { sendOTPEmail};

@@ -18,14 +18,15 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    verificationToken: {
+    otp: {
         type: String,
         default: null
     },
-    verificationTokenExpires: {
+    otpExpires: {
         type: Date,
         default: null
     }
+
 }, { timestamps: true }); //adds created at and updated at timestamps
 
 const User = mongoose.model('User', userSchema);

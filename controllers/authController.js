@@ -1,9 +1,7 @@
 const bcrypt = require('bcryptjs');
 const User = require('../server/models/user.models');
-const { generateVerificationToken } = require('../services/token');
-const { sendVerificationEmail } = require('../services/verification-email');
 const { validateEmail, validatePassword } = require('../utils/validators');
-const jwt = require("jsonwebtoken");
+const sendOTPEmail = require('../services/verification-email').sendOTPEmail;
 
 
 const signup = async (req, res) => {
@@ -30,76 +28,98 @@ const signup = async (req, res) => {
             return res.status(409).json({ message: 'Email already registered' });
         }
 
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpires = Date.now() + 600000; // 10 minutes
+
         // Create user
         const hashedPassword = await bcrypt.hash(password, 10);
-        const verificationToken = generateVerificationToken(lowerEmail);
-
+        
         const newUser = new User({
             email: lowerEmail,
             password: hashedPassword,
-            verificationToken,
-            tokenExpires: Date.now() + 600000 // 10 minutes
+            otp,
+            otpExpires
         });
 
         await newUser.save();
 
-        // Send verification email
-        await sendVerificationEmail(lowerEmail, verificationToken);
+        // Send OTP email
+        await sendOTPEmail(lowerEmail, otp);
 
         res.status(201).json({
-            message: 'Verification email sent! Check your inbox.',
+            message: 'OTP sent to your email. Check your inbox.',
             email: lowerEmail
         });
 
     } catch (error) {
         console.error('Signup error:', error);
-        await User.deleteOne({ email: lowerEmail });
+        
+        // Cleanup: Remove user if OTP failed to send
+        await User.deleteOne({ email: lowerEmail }).catch(cleanupError => {
+            console.error('User cleanup failed:', cleanupError);
+        });
+
         res.status(500).json({
             message: error.message || 'Registration failed',
-            error: error.message
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 };
 
-const verifyEmail = async (req, res) => {
+const verifyOTP = async (req, res) => {
     try {
-        const { token } = req.query;
+        const { email, otp } = req.body;
+        const lowerEmail = email.toLowerCase();
 
-        // Verify JWT
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        // Find user with matching token and check expiration
+        // Find user with matching email and valid OTP
         const user = await User.findOne({
-            email: decoded.email,
-            verificationToken: token,
-            tokenExpires: { $gt: Date.now() }
+            email: lowerEmail,
+            otpExpires: { $gt: Date.now() } // Check OTP hasn't expired
         });
 
         if (!user) {
-            return res.redirect(`${CLIENT_URL}/error?type=token_expired`);
+            return res.status(400).json({
+                success: false,
+                message: "OTP expired or invalid"
+            });
         }
 
-        // Update verification status
+        // Compare OTP (plain text comparison)
+        if (user.otp !== otp) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid OTP code"
+            });
+        }
+
+        // Mark user as verified
         user.isVerified = true;
-        user.verificationToken = undefined;
-        user.tokenExpires = undefined;
+        user.otp = undefined;
+        user.otpExpires = undefined;
         await user.save();
 
-        res.redirect(`${CLIENT_URL}/signup-verified.html`);
+        res.json({
+            success: true,
+            message: "Email verified successfully!"
+        });
 
     } catch (error) {
-        console.error('Verification error:', error);
-        return res.redirect(`${CLIENT_URL}/signup-unverified.html?error=token_expired`);
+        console.error('OTP Verification Error:', error);
+        res.status(500).json({
+            success: false,
+            message: "Verification failed"
+        });
     }
 };
 
-const resendVerification = async (req, res) => {
+const resendOTP = async (req, res) => {
     try {
         const { email } = req.body;
         const lowerEmail = email.toLowerCase();
 
         // Find unverified user
-        const user = await User.findOne({
+        const user = await User.findOne({ 
             email: lowerEmail,
             isVerified: false
         });
@@ -111,41 +131,31 @@ const resendVerification = async (req, res) => {
             });
         }
 
-        // Generate new token
-        const newToken = jwt.sign(
-            { email: lowerEmail },
-            process.env.JWT_SECRET,
-            { expiresIn: '10m' }
-        );
+        // Generate new OTP
+        const newOTP = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpires = Date.now() + 600000; // 10 minutes
 
         // Update user record
-        user.verificationToken = newToken;
-        user.tokenExpires = Date.now() + 600000; // 10 minutes
+        user.otp = newOTP;
+        user.otpExpires = otpExpires;
         await user.save();
 
-        // Send new email
-        await sendVerificationEmail(lowerEmail, newToken);
+        // Send new OTP email
+        await sendOTPEmail(lowerEmail, newOTP);
 
         res.json({
             success: true,
-            message: "New verification email sent"
+            message: "New OTP has been sent to your email"
         });
 
     } catch (error) {
         console.error('Resend error:', error);
         res.status(500).json({
             success: false,
-            message: "Failed to resend verification email"
+            message: "Failed to resend OTP. Please try again later."
         });
     }
 };
-// Delete expired tokens periodically (add to server startup)
-setInterval(async () => {
-    await User.deleteMany({
-        tokenExpires: { $lt: Date.now() },
-        isVerified: false
-    });
-}, 60 * 60 * 1000); // Run hourly
 
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -177,4 +187,4 @@ const login = async (req, res) => {
     }
 };
 
-module.exports = { signup, verifyEmail, login, resendVerification };
+module.exports = { signup, verifyOTP, login, resendOTP };

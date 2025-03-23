@@ -1,18 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const { resendLimiter } = require('../middleware/rateLimit');
-
+const resendLimiter = require('../middleware/rateLimit');
 
 // POST /api/auth/signup
 router.post('/signup', authController.signup);
 
-// GET /api/auth/verify-email
-router.get('/verify-email', authController.verifyEmail);
-
-// POST /api/auth/resend-verification
-router.post('/resend-verification', resendLimiter, authController.resendVerification);
-
+// routes/authRoutes.js
+router.post('/verify-otp', authController.verifyOTP);
+router.post('/resend-otp', resendLimiter, authController.resendOTP);
 // POST /api/auth/login
 router.post('/login', authController.login);
 

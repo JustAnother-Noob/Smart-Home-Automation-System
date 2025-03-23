@@ -138,29 +138,26 @@ signupForm.addEventListener('submit', async (event) => {
         const response = await fetch('http://127.0.0.1:5001/api/auth/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email.value.toLowerCase(), password: password.value })
+            body: JSON.stringify({ 
+                email: email.value.toLowerCase(), 
+                password: password.value 
+            })
         });
-    
+
         const data = await response.json();
-        if (response.status === 400 && data.type === 'password') {
-            Object.keys(data.requirements).forEach(requirement => {
-                const element = document.getElementById(requirement);
-                element.style.color = data.requirements[requirement] ? 'green' : 'red';
-            });
-            passwordError.textContent = data.message;
-            password.style.borderColor = 'red';
-        }
+        
         if (response.ok) {
-            window.location.href = `signupconfirmation.html?email=${encodeURIComponent(email.value)}`;
+            // Redirect to OTP verification page
+            window.location.href = `otp-verify.html?email=${encodeURIComponent(email.value)}`;
         } else {
-            alert(data.message || 'Sign-up failed.');
+            alert(data.message || 'Sign-up failed');
         }
     } catch (error) {
+        console.error('Signup error:', error);
+        alert('Connection error. Please try again.');
+    } finally {
         loadingOverlay.classList.remove('active');
         signupForm.classList.remove('form-disabled');
         submitButton.disabled = false;
-        console.error('Error signing up:', error);
-        alert('An unexpected error occurred.');
-    } 
-
+    }
 });

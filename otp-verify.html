@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify OTP</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --success-color: #10B981;
+            --error-color: #EF4444;
+            --text-color: #1F2937;
+            --background-color: #F9FAFB;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--background-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 1rem;
+        }
+
+        .container {
+            background: white;
+            max-width: 400px;
+            width: 100%;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .otp-input {
+            width: 100%;
+            font-size: 1.875rem;
+            letter-spacing: 0.5rem;
+            padding: 1rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 0.5rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .otp-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.875rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1D4ED8;
+        }
+
+        #message {
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin: 1rem 0;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .success {
+            background-color: #D1FAE5;
+            color: var(--success-color);
+            border: 1px solid #A7F3D0;
+        }
+
+        .error {
+            background-color: #FEE2E2;
+            color: var(--error-color);
+            border: 1px solid #FECACA;
+        }
+
+        .resend-section {
+            margin-top: 1.5rem;
+            color: #6B7280;
+        }
+
+        .resend-button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-weight: 500;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .resend-button:hover {
+            background-color: #EFF6FF;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 3px solid rgba(37, 99, 235, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.25rem;
+            }
+            
+            .otp-input {
+                font-size: 1.5rem;
+                padding: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Verify Your Email</h2>
+        <form id="otpForm">
+            <input type="number" class="otp-input" 
+                   id="otp" placeholder="000000" required>
+            <button type="submit">Verify Account</button>
+        </form>
+        <div id="message"></div>
+        <div class="resend-section">
+            Didn't receive the code? 
+            <button class="resend-button" onclick="resendOTP()">
+                Resend OTP
+            </button>
+        </div>
+        <div id="loading" style="display: none;">
+            <div class="loading"></div>
+        </div>
+    </div>   
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+
+        document.getElementById('otpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const otp = document.getElementById('otp').value;
+            const messageDiv = document.getElementById('message');
+
+            // Clear previous messages
+            messageDiv.textContent = '';
+            messageDiv.style.color = '';
+
+            try {
+                const response = await fetch('http://localhost:5001/api/auth/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: new URLSearchParams(window.location.search).get('email'),
+                        otp: otp.toString() // Ensure string format
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    messageDiv.style.color = 'green';
+                    messageDiv.textContent = 'Verification successful! Redirecting...';
+                    setTimeout(() => {
+                        window.location.href = '/login.html';
+                    }, 1500);
+                } else {
+                    messageDiv.style.color = 'red';
+                    messageDiv.textContent = data.message || 'Verification failed';
+                }
+            } catch (error) {
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = 'Network error. Please try again.';
+                console.error('Verification error:', error);
+            }
+        });
+        // Add null checks and error handling
+async function resendOTP() {
+    const messageDiv = document.getElementById('message');
+    const resendButton = document.querySelector('button[onclick="resendOTP()"]');
+    const loadingDiv = document.getElementById('loading');
+function showLoading(show) {
+    loadingDiv.style.display = show ? 'block' : 'none';
+}
+    
+    if (!messageDiv || !resendButton) {
+        console.error('Required elements not found');
+        return;
+    }
+
+    try {
+        // Clear previous messages
+        messageDiv.textContent = '';
+        messageDiv.style.color = '';
+
+        // Disable button during request
+        resendButton.disabled = true;
+        messageDiv.textContent = 'Sending new OTP...';
+        messageDiv.style.color = '#666';
+
+        const email = new URLSearchParams(window.location.search).get('email');
+        if (!email) {
+            throw new Error('Email parameter missing');
+        }
+
+        const response = await fetch('http://localhost:5001/api/auth/resend-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+        
+        messageDiv.style.color = response.ok ? 'green' : 'red';
+        messageDiv.textContent = data.message;
+
+        if (response.status === 429) {
+            // Handle rate limiting
+            const retryAfter = parseInt(response.headers.get('Retry-After')) || 300;
+            let secondsLeft = retryAfter;
+            
+            const timerInterval = setInterval(() => {
+                messageDiv.textContent = `Try again in ${secondsLeft} seconds`;
+                secondsLeft--;
+                
+                if (secondsLeft <= 0) {
+                    clearInterval(timerInterval);
+                    resendButton.disabled = false;
+                    messageDiv.textContent = '';
+                }
+            }, 1000);
+        } else {
+            resendButton.disabled = false;
+        }
+
+    } catch (error) {
+        messageDiv.style.color = 'red';
+        messageDiv.textContent = error.message || 'Failed to resend OTP';
+        console.error('Resend error:', error);
+        resendButton.disabled = false;
+    }
+}
+    </script>
+</body>
+
+</html>
