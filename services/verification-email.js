@@ -56,28 +56,18 @@ const createTransporter = async () => {
         throw error;
     }
 };
-// services/emailService.js
-const sendOTPEmail = async (email, otp) => {
+
+const sendOTPEmail = async (email, otp, type = 'verification') => {
     try {
         const transporter = await createTransporter();
+        
+        const { subject, html } = getEmailContent(type, otp);
         
         await transporter.sendMail({
             from: `"Smart Living Tech" <${EMAIL_USER}>`,
             to: email,
-            subject: 'Verify Your Email - OTP Code',
-            html: `
-                <div style="font-family: Arial, sans-serif; color: #333;">
-                    <h2 style="color: #4CAF50;">Email Verification</h2>
-                    <p style="font-size: 1.2rem;">Hello,</p>
-                    <p style="font-size: 1.2rem;">To complete your registration, please use the One-Time Password (OTP) below:</p>
-                    <h1 style="font-size: 2.5rem; letter-spacing: 0.2rem; color: #007BFF;">
-                        ${otp}
-                    </h1>
-                    <p style="font-size: 1.2rem;">Please note that this code will expire in <strong>10 minutes</strong>.</p>
-                    <p style="font-size: 1.2rem;">If you did not request this code, please ignore this email.</p>
-                    <p style="font-size: 1.2rem;">Thank you for choosing Smart Living Tech!</p>
-                </div>
-            `
+            subject: subject,
+            html: html
         });
         
     } catch (error) {
@@ -86,4 +76,62 @@ const sendOTPEmail = async (email, otp) => {
     }
 };
 
+const getEmailContent = (type, otp) => {
+    const baseStyles = `
+        font-family: Arial, sans-serif;
+        color: #333;
+        line-height: 1.6;
+    `;
+    
+    const commonTemplate = `
+        <div style="${baseStyles}">
+            <h2 style="color: #4CAF50; border-bottom: 2px solid #4CAF50; 
+                padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+                Smart Living Tech ${type === 'verification' ? 'Email Verification' : 'Password Reset'}
+            </h2>
+            <p style="font-size: 1.1rem; margin-bottom: 1rem;">
+                Hello,
+            </p>
+            <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">
+                ${type === 'verification' 
+                    ? 'To complete your registration, please use the One-Time Password (OTP) below:' 
+                    : 'To reset your password, please use the following One-Time Password (OTP):'}
+            </p>
+            <div style="text-align: center; margin: 2rem 0;">
+                <h1 style="
+                    font-size: 2.5rem;
+                    letter-spacing: 0.5rem;
+                    color: #007BFF;
+                    background: #f8f9fa;
+                    padding: 1rem;
+                    border-radius: 8px;
+                    display: inline-block;
+                    margin: 0;">
+                    ${otp}
+                </h1>
+            </div>
+            <p style="font-size: 1.1rem; margin-bottom: 1rem;">
+                This code will expire in <strong>10 minutes</strong>.
+            </p>
+            <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">
+                ${type === 'verification' 
+                    ? 'If you did not request this code, please ignore this email.' 
+                    : 'If you did not request a password reset, please contact our support team immediately.'}
+            </p>
+            <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                <p style="font-size: 0.9rem; color: #666;">
+                    Thank you for choosing Smart Living Tech!<br>
+                    <span style="font-size: 0.8rem;">
+                        This is an automated message - please do not reply directly to this email.
+                    </span>
+                </p>
+            </div>
+        </div>
+    `;
+
+    return {
+        subject: `Smart Living Tech - ${type === 'verification' ? 'Email Verification Code' : 'Password Reset Code'}`,
+        html: commonTemplate
+    };
+};
 module.exports = { sendOTPEmail};
