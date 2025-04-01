@@ -3,10 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "http://smartlivingtech.me/Smart-Home-Automation-System/",
+  "homepage": "http://smartlivingtech.me/",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --base=/Smart-Home-Automation-System/",
+    "build": "vite build --base=/",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
