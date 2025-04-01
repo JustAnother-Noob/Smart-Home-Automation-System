@@ -292,15 +292,19 @@ export default function Header() {
         style={{ "--header-height": "72px" }}
       >
         {/* Logo */}
-        <a
-          href="/"
-          className="text-blue-600 font-bold tracking-widest text-xl sm:text-2xl lg:text-2xl xl:text-3xl uppercase flex-shrink-0"
-          aria-label="Smart Living Home Page"
-        >
-          Smart Living
-        </a>
+          <a
+            href="/"
+            className="flex-shrink-0"
+            aria-label="Smart Living Home Page"
+          >
+            <img 
+              src="src/asset/images/logo.png" 
+              alt="Smart Living" 
+              className="h-40 md:h-30 w-auto" 
+            />
+          </a>
 
-        {/* Desktop Navigation*/}
+          {/* Desktop Navigation*/}
         <nav className="hidden lg:flex flex-1 justify-center" aria-label="Main Navigation">
           <div className="flex items-center gap-6 xl:gap-8">
             {navLinks.map((link) => (
