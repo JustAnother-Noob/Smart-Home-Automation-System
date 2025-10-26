@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Living Tech – Admin Products</title>
+    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dkx5o5nqk/image/upload/v1759927622/logo_without_background_n42aqy.png">
+    <link rel="shortcut icon" type="image/png" href="https://res.cloudinary.com/dkx5o5nqk/image/upload/v1759927622/logo_without_background_n42aqy.png">
+    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dkx5o5nqk/image/upload/v1759927622/logo_without_background_n42aqy.png">
+    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="css/admin-top-nav.css" />
+    <link rel="stylesheet" href="css/modal.css" />
+    <link rel="stylesheet" href="css/products.css" />
+    <link rel="stylesheet" href="css/clearance.css" />
+    <link rel="stylesheet" href="css/components/cloudinary-management.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('adminDarkMode');
+          const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          
+          if (savedTheme === 'dark' || (savedTheme === null && systemPrefersDark)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) {
+          // Silently fail if localStorage is not available
+        }
+        
+        // Prevent default favicon request
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.type = 'image/png';
+        link.href = 'https://res.cloudinary.com/dkx5o5nqk/image/upload/v1759927622/logo_without_background_n42aqy.png';
+        document.head.appendChild(link);
+      })();
+    </script>
+</head>
+<body>
+    
+    <div class="admin-loading-overlay" id="loading-overlay" role="status" aria-live="polite" aria-label="Loading">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <div class="container">
+        
+        <nav class="admin-top-nav" id="adminTopNav" role="navigation" aria-label="Admin navigation">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <img src="https://res.cloudinary.com/dkx5o5nqk/image/upload/v1759927622/logo_without_background_n42aqy.png" alt="Smart Home Logo" class="nav-logo-img">
+                    <span class="nav-brand">Smart Living Tech Admin</span>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="adminHome.html"><i class="fas fa-tachometer-alt" aria-hidden="true"></i> <span class="nav-text">Dashboard</span></a></li>
+                    <li class="nav-item"><a href="adminUsers.html"><i class="fas fa-users" aria-hidden="true"></i> <span class="nav-text">Users</span></a></li>
+                    <li class="nav-item active"><a href="adminProducts.html" aria-current="page"><i class="fas fa-box" aria-hidden="true"></i> <span class="nav-text">Products</span></a></li>
+                    <li class="nav-item"><a href="adminOrders.html"><i class="fas fa-shopping-cart" aria-hidden="true"></i> <span class="nav-text">Orders</span></a></li>
+                    <li class="nav-item"><a href="adminInstallations.html"><i class="fas fa-tools" aria-hidden="true"></i> <span class="nav-text">Installations</span></a></li>
+                    <li class="nav-item"><a href="adminCoupons.html"><i class="fas fa-ticket-alt" aria-hidden="true"></i> <span class="nav-text">Coupons</span></a></li>
+                    <li class="nav-item"><a href="adminNetworkLogs.html"><i class="fas fa-network-wired" aria-hidden="true"></i> <span class="nav-text">Network Logs</span></a></li>
+                    <li class="nav-item"><a href="adminSettings.html"><i class="fas fa-cog" aria-hidden="true"></i> <span class="nav-text">Settings</span></a></li>
+                </ul>
+
+                <div class="nav-user-info">
+                    <span class="nav-welcome-text">Welcome,</span>
+                    <span class="nav-admin-name" id="adminNameDisplay">Admin</span>
+                    <button id="headerLogoutBtn" class="nav-logout-btn" title="Logout">
+                        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+                
+                <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                    <i class="fas fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+        </nav>
+        <main class="main-content" role="main">
+            <div class="content">
+                <section id="products-page" class="card page-section" aria-labelledby="products-heading">
+                    <header class="card-header">
+                        <div class="action-bar products-header">
+                            <div class="section-header">
+                                <h2 id="products-heading" class="no-margin">Product Management Tools</h2>
+                                <p class="section-description">Search, filter, add, edit, and delete products in your inventory</p>
+                            </div>
+                            <div class="products-toolbar" role="group" aria-label="Product search and filters">
+                                <div class="products-controls">
+                                    <div class="search-container">
+                                        <label for="productSearch" class="sr-only">Search products</label>
+                                        <input type="text" id="productSearch" placeholder="Search products..." class="search-input" aria-describedby="productSearchHelp">
+                                        <div id="productSearchHelp" class="sr-only">Enter product name or description to search</div>
+                                    </div>
+                                    <div class="filter-container" role="group" aria-label="Product filters">
+                                        <label for="categoryFilter" class="sr-only">Filter by category</label>
+                                        <select id="categoryFilter" class="filter-select" aria-label="Filter by category">
+                                            <option value="">All Categories</option>
+                                            <option value="Automation Kits">Automation Kits</option>
+                                            <option value="Climate Control">Climate Control</option>
+                                            <option value="Hubs &amp; Bridges">Hubs &amp; Bridges</option>
+                                            <option value="Security">Security</option>
+                                            <option value="Smart Lighting">Smart Lighting</option>
+                                        </select>
+                                        <label for="stockFilter" class="sr-only">Filter by stock level</label>
+                                        <select id="stockFilter" class="filter-select" aria-label="Filter by stock level">
+                                            <option value="">All Stock Levels</option>
+                                            <option value="in-stock">In Stock</option>
+                                            <option value="low-stock">Low Stock (&lt; 10)</option>
+                                            <option value="out-of-stock">Out of Stock</option>
+                                        </select>
+                                        <label for="sortFilter" class="sr-only">Sort products</label>
+                                        <select id="sortFilter" class="filter-select" aria-label="Sort products">
+                                            <option value="name-asc">Name (A-Z)</option>
+                                            <option value="name-desc">Name (Z-A)</option>
+                                            <option value="price-asc">Price (Low to High)</option>
+                                            <option value="price-desc">Price (High to Low)</option>
+                                            <option value="stock-asc">Stock (Low to High)</option>
+                                            <option value="stock-desc">Stock (High to Low)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="products-actions">
+                                    <button type="button" id="refreshProducts" class="btn btn-primary" title="Refresh products" aria-label="Refresh products">
+                                        <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                                        <span>Refresh</span>
+                                    </button>
+                                    <button type="button" id="addProductBtn" class="btn btn-success" aria-describedby="addProductHelp">
+                                        <i class="fas fa-plus" aria-hidden="true"></i> Add New Product
+                                    </button>
+                                </div>
+                                <div id="addProductHelp" class="sr-only">Opens form to add a new product to the system</div>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <div id="productsStatusMessage" class="status-message" role="status" aria-live="polite"></div>
+                        <div id="productsLoadingSpinner" class="loading-spinner" role="status" aria-live="polite">
+                            <span class="sr-only">Loading products...</span>
+                        </div>
+
+                        <div id="cardView" class="view-container active" role="region" aria-label="Card view">
+                            <div class="product-grid" id="productGrid"></div>
+                        </div>
+
+                        <div class="pagination-container">
+                            <div class="items-per-page">
+                                <label for="itemsPerPage">Show:</label>
+                                <select id="itemsPerPage">
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+                            <div class="pagination" id="pagination"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="productModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="productModalTitle" aria-hidden="true">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <div class="modal-title-container">
+                    <i class="fas fa-box" aria-hidden="true"></i>
+                    <h2 id="productModalTitle">Add New Product</h2>
+                </div>
+            </div>
+            <div class="modal-body">
+                
+                <div id="productStatusMessage" class="status-message" role="status" aria-live="polite" style="display: none;"></div>
+
+                <div id="currentImageContainer" class="current-image-container" style="display: none;"></div>
+
+                <form id="productForm" aria-describedby="productUploadHelp productStatusMessage">
+                    <input type="hidden" id="productId" name="id" value="">
+
+                    <div class="form-group">
+                        <label for="productName">Product Name <span class="required-asterisk" aria-hidden="true">*</span></label>
+                        <input type="text" id="productName" name="name" required placeholder="Enter product name" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productDesc">Description</label>
+                        <textarea id="productDesc" name="description" rows="4" placeholder="Enter product description" autocomplete="off"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productPrice">Price <span class="required-asterisk" aria-hidden="true">*</span></label>
+                            <input type="number" id="productPrice" name="price" step="0.01" min="0" required placeholder="0.00" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="productQty">Quantity <span class="required-asterisk" aria-hidden="true">*</span></label>
+                            <input type="number" id="productQty" name="quantity" min="0" required placeholder="0" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productCategory">Category <span class="required-asterisk" aria-hidden="true">*</span></label>
+                            <select id="productCategory" name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="Automation Kits">Automation Kits</option>
+                                <option value="Climate Control">Climate Control</option>
+                                <option value="Hubs &amp; Bridges">Hubs &amp; Bridges</option>
+                                <option value="Security">Security</option>
+                                <option value="Smart Lighting">Smart Lighting</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productStatus">Status</label>
+                            <select id="productStatus" name="status">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                            <small class="text-secondary d-block mt-4 fs-11">Stock badges (Low / Out) are automatic based on quantity.</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <div class="checkbox-group" id="clearanceGroup">
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" id="productClearance" name="clearance" value="true">
+                                    <label for="productClearance">Clearance Sale</label>
+                                </div>
+                                <small class="text-secondary fs-12 mt-4">
+                                    <i class="fas fa-info-circle mr-4"></i>
+                                    Enable to set a discounted price & highlight product as clearance item.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productDiscountedPrice">
+                                <i class="fas fa-percentage mr-6 color-danger"></i>
+                                Discounted Price
+                                <span class="badge badge-secondary" style="font-size: 0.7em; font-weight: normal; margin-left: 8px;">
+                                    <i class="fas fa-lock" style="font-size: 0.9em;"></i> Requires Clearance Sale
+                                </span>
+                            </label>
+                            <input type="number" id="productDiscountedPrice" name="discountedPrice" step="0.01" min="0" placeholder="Enable clearance sale first" disabled aria-describedby="discountedPriceHelp">
+                            <small id="discountedPriceHelp" class="text-secondary fs-12 mt-4">
+                                <i class="fas fa-info-circle mr-4"></i>
+                                Check "Clearance Sale" above to enable this field. Discounted price must be lower than regular price.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product Images</label>
+                        <div id="productImageGallery" class="image-gallery-container">
+                            
+                        </div>
+                        <div class="image-upload-help" id="productUploadHelp">
+                            <i class="fas fa-info-circle"></i>
+                            Click on any image to view full-size preview. Supported formats: JPG, PNG, GIF (Max: 5MB each)
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                    Cancel
+                </button>
+                <button type="submit" form="productForm" class="btn btn-primary">
+                    <i class="fas fa-save" aria-hidden="true"></i>
+                    Save Product
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/init.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/auth-utils.js"></script>
+    <script src="js/logout.js"></script>
+    <script src="js/admin-top-nav.js"></script>
+    <script src="js/admin_js/darkMode.js"></script>
+    <script src="js/admin_js/refresh-utils.js"></script>
+    <script src="js/admin_js/image-service.js"></script>
+    <script src="js/utils/modal-utils.js"></script>
+    <script src="js/utils/pagination.js"></script>
+    <script src="js/admin_js/adminProducts.js"></script>
+    <script src="js/admin_js/admin-utils.js"></script>
+    <script src="js/admin_js/admin-header.js"></script>
+
+</body>
+</html>

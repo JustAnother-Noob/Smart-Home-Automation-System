@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Login - Smart Home Automation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="email"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin: 20px 0; padding: 15px; border-radius: 4px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Debug Login System</h1>
+        
+        <div class="info">
+            <h3>Environment Info</h3>
+            <p><strong>Current URL:</strong> <span id="currentUrl"></span></p>
+            <p><strong>API Base:</strong> <span id="apiBase"></span></p>
+            <p><strong>Config Mode:</strong> <span id="configMode"></span></p>
+        </div>
+
+        <form id="debugLoginForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" value="admin@smarthome.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" value="Admin123!" required>
+            </div>
+            
+            <button type="submit">Test Login</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Environment configuration
+        const CONFIG = {
+            API_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                ? 'http://127.0.0.1:5002/api' 
+                : '/api',
+            DEPLOYMENT_MODE: 'auto'
+        };
+
+        // Display environment info
+        document.getElementById('currentUrl').textContent = window.location.href;
+        document.getElementById('apiBase').textContent = CONFIG.API_URL;
+        document.getElementById('configMode').textContent = CONFIG.DEPLOYMENT_MODE;
+
+        // Login form handler
+        document.getElementById('debugLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerHTML = '<div class="info">🔄 Testing login...</div>';
+            
+            try {
+                // Test 1: Check if backend is reachable
+                resultDiv.innerHTML += '<div class="info">📡 Testing backend connectivity...</div>';
+                
+                const healthResponse = await fetch(`${CONFIG.API_URL}/auth/health`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (healthResponse.ok) {
+                    resultDiv.innerHTML += '<div class="success">✅ Backend is reachable</div>';
+                } else {
+                    resultDiv.innerHTML += '<div class="error">❌ Backend health check failed</div>';
+                }
+                
+                // Test 2: Get CSRF token
+                resultDiv.innerHTML += '<div class="info">🔐 Getting CSRF token...</div>';
+                
+                let csrfToken = null;
+                try {
+                    const csrfResponse = await fetch(`${CONFIG.API_URL}/csrf-token`, {
+                        credentials: 'include'
+                    });
+                    
+                    if (csrfResponse.ok) {
+                        const csrfData = await csrfResponse.json();
+                        csrfToken = csrfData.csrfToken;
+                        resultDiv.innerHTML += '<div class="success">✅ CSRF token obtained</div>';
+                    } else {
+                        resultDiv.innerHTML += '<div class="error">❌ CSRF token failed</div>';
+                    }
+                } catch (csrfError) {
+                    resultDiv.innerHTML += '<div class="error">❌ CSRF token error: ' + csrfError.message + '</div>';
+                }
+                
+                // Test 3: Attempt login
+                resultDiv.innerHTML += '<div class="info">🔑 Attempting login...</div>';
+                
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                };
+                
+                if (csrfToken && csrfToken !== 'dev-mode-no-csrf') {
+                    headers['X-CSRF-Token'] = csrfToken;
+                }
+                
+                const loginResponse = await fetch(`${CONFIG.API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers,
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        email: email.trim().toLowerCase(),
+                        password: password,
+                        recaptchaToken: 'test-token' // Skip reCAPTCHA for debugging
+                    })
+                });
+                
+                const loginData = await loginResponse.json();
+                
+                if (loginResponse.ok && loginData.success) {
+                    resultDiv.innerHTML += '<div class="success">✅ Login successful!</div>';
+                    resultDiv.innerHTML += '<pre>' + JSON.stringify(loginData, null, 2) + '</pre>';
+                    
+                    // Store token if provided
+                    if (loginData.data && loginData.data.token) {
+                        localStorage.setItem('authToken', loginData.data.token);
+                        resultDiv.innerHTML += '<div class="success">✅ Token stored in localStorage</div>';
+                    }
+                } else {
+                    resultDiv.innerHTML += '<div class="error">❌ Login failed</div>';
+                    resultDiv.innerHTML += '<div class="error">Status: ' + loginResponse.status + '</div>';
+                    resultDiv.innerHTML += '<pre>' + JSON.stringify(loginData, null, 2) + '</pre>';
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML += '<div class="error">❌ Network error: ' + error.message + '</div>';
+            }
+        });
+    </script>
+</body>
+</html>

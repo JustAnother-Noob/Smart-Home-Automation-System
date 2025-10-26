@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Your Cart - Smart Living Tech</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="assets/logo.ico" />
+  
+  <style>
+    /* Prevent layout shift during loading */
+    * { box-sizing: border-box; }
+    body { 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Inter', sans-serif; 
+      background-color: #ffffff;
+      overflow-x: hidden;
+    }
+    html { scroll-behavior: smooth; }
+    #navbar { 
+      min-height: 85px; 
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: white;
+    }
+    main { 
+      opacity: 0; 
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    main.loaded { 
+      opacity: 1; 
+      visibility: visible;
+    }
+    /* Prevent container blinking/flashing */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      box-sizing: border-box;
+    }
+    .cart-container, .cart-items, .cart-summary {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      box-sizing: border-box;
+    }
+    /* Hide banners initially to prevent blinking - show them last */
+    .shipping-banner, .promo-banner, .info-banner, .info-banner-small {
+      box-sizing: border-box;
+      width: 100%;
+      position: relative;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .info-banner-icon, .info-banner-content, .info-banner-actions {
+      box-sizing: border-box;
+      position: relative;
+    }
+    /* Show banners after everything else is loaded */
+    .banners-loaded .shipping-banner,
+    .banners-loaded .promo-banner,
+    .banners-loaded .info-banner,
+    .banners-loaded .info-banner-small {
+      opacity: 1;
+      visibility: visible;
+    }
+    /* Prevent breadcrumb blinking */
+    #breadcrumb-root, .breadcrumb, .breadcrumb-nav {
+      box-sizing: border-box;
+      width: 100%;
+      position: relative;
+      min-height: 24px;
+      margin: 0;
+      padding: 8px 0;
+    }
+    /* Prevent content flash */
+    .cart-container, .cart-items, .cart-summary {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    main.loaded .cart-container,
+    main.loaded .cart-items,
+    main.loaded .cart-summary {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/products.css" />
+  
+  <link rel="stylesheet" href="css/pages/user_cart.css" />
+  <link rel="stylesheet" href="css/components/similar-products.css" />
+  <link rel="stylesheet" href="css/components/user-product-card.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+
+  <script src="js/loadNav.js"></script>
+</head>
+<body>
+
+  <div id="notification-root"></div>
+  <script src="js/components/notification-loader.js"></script>
+
+  <div id="navbar"></div>
+
+  <div class="container" style="margin-top:8px; margin-bottom:0;">
+    <div id="breadcrumb-root" data-breadcrumb-parent="Products" data-breadcrumb-parent-href="user_products.html" data-breadcrumb-current="Cart"></div>
+    <script src="js/components/breadcrumb-loader.js" defer></script>
+  </div>
+
+  <div id="stockValidationModal" class="stock-modal" style="display: none;">
+    <div class="stock-modal-overlay"></div>
+    <div class="stock-modal-content">
+      <div class="stock-modal-header">
+        <div class="stock-modal-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h2 class="stock-modal-title">Stock Unavailable</h2>
+        <button class="stock-modal-close" id="closeStockModal" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="stock-modal-body">
+        <p class="stock-modal-message" id="stockModalMessage">
+          Some items in your cart are unavailable or have insufficient stock.
+        </p>
+        
+        <div class="stock-modal-items" id="stockModalItems">
+          
+        </div>
+        
+        <div class="stock-modal-suggestion">
+          <i class="fas fa-lightbulb"></i>
+          <p>Please remove out-of-stock items or adjust quantities to proceed with checkout.</p>
+        </div>
+      </div>
+      
+      <div class="stock-modal-footer">
+        <button class="btn-primary stock-modal-btn" id="reviewCartBtn">
+          <i class="fas fa-shopping-cart"></i>
+          Review Cart
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <main class="cart-page">
+    <header class="cart-header">
+      <div>
+        <h1 style="margin:.2rem 0 .3rem;font-size:1.7rem;font-weight:600;letter-spacing:.5px;">My Cart</h1>
+      </div>
+    </header>
+
+    <section class="cart-grid">
+      <div>
+        <div id="cartItems" class="cart-items" aria-live="polite"></div>
+        <div id="emptyState" class="empty" style="display:none;">
+          <h2 style="margin:0 0 .75rem; font-size:1.1rem;">Your cart is empty</h2>
+          <p style="margin:0 0 1.25rem; font-size:.85rem;">Browse products and add items to begin checkout.</p>
+          <button id="shopNowBtn" class="btn-primary">Browse Products</button>
+        </div>
+      </div>
+
+      <aside class="sidebar-sections" aria-label="Cart sidebar">
+        
+        <div class="coupon-section-container">
+          <h3 style="margin:0 0 1rem; font-size: 1.1rem; font-weight: 600;">Have a Coupon?</h3>
+
+          <div class="coupon-box form-group" id="couponInputBox">
+            <input id="couponInput" type="text" placeholder="Enter coupon code" aria-label="Coupon code" />
+            <button id="applyCouponBtn" class="btn-primary coupon-apply-btn">Apply</button>
+          </div>
+
+          <div id="couponAppliedRow" class="coupon-applied-row" style="display:none;">
+            <div class="coupon-applied-content">
+              <i class="fas fa-tag" style="color: #16a34a;"></i>
+              <span id="couponAppliedCode" class="coupon-applied-code"></span>
+            </div>
+            <button id="removeCouponBtn" class="btn-danger coupon-remove-btn">Remove</button>
+          </div>
+
+          <div id="couponMessage" class="coupon-message" style="display: none;"></div>
+        </div>
+
+        <div class="summary" id="summaryPanel">
+          <h3 style="margin:0 0 1rem; font-size: 1.1rem; font-weight: 600;">Order Summary</h3>
+          <div class="rows">
+          <div class="row-line"><span>Subtotal</span><span id="summarySubtotal">$0.00</span></div>
+          <div class="row-line"><span>Items</span><span id="summaryItems">0</span></div>
+          <div class="row-line discount-row" id="discountRow" style="display:none;"><span>Discount</span><span id="summaryDiscount">- $0.00</span></div>
+          <div class="tot-line row-line"><span>Total</span><span id="summaryTotal">$0.00</span></div>
+        </div>
+        <p class="summary-note" style="font-size:.7rem;color:#6b7280;margin:1rem 0 1.25rem;line-height:1.2;">
+          Includes GST. Shipping calculated at checkout.
+        </p>
+        <button id="checkoutBtn" class="btn-primary checkout-btn" style="width:100%;">Checkout</button>
+        </div>
+      </aside>
+    </section>
+
+    <section class="similar-products-section" id="cart-bestsellers-section" style="display: none; margin-top: 3rem;">
+      <div class="similar-products-header">
+        <div>
+          <h2 class="similar-products-title">You May Also Like</h2>
+        </div>
+        <a href="user_products.html" class="similar-products-view-all">
+          View All Products <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div id="cart-bestsellers-loading" class="similar-products-loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading products...</p>
+      </div>
+
+      <div id="cart-bestsellers-grid" class="similar-products-grid"></div>
+
+      <div id="cart-bestsellers-empty" class="similar-products-empty" style="display: none;">
+        <p>No products available at the moment.</p>
+      </div>
+
+      <div id="cart-bestsellers-error" class="similar-products-error" style="display: none;">
+        <p>Failed to load products. Please try again later.</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/auth-utils.js" defer></script>
+  <script>
+    // Dynamically load navbar and footer similar to auth pages
+    Promise.all([
+      fetch('./user_nav.html').then(r=>r.text()),
+      fetch('./user_footer.html').then(r=>r.text())
+    ]).then(([navHtml, footerHtml]) => {
+      document.getElementById('navbar').innerHTML = navHtml;
+      document.getElementById('footer').innerHTML = footerHtml;
+      // Load nav.js and user_nav.js after markup exists
+      const navScript = document.createElement('script');
+      navScript.src = '../js/nav.js';
+      navScript.onload = () => {
+        if(window.refreshCartCount) window.refreshCartCount();
+        const userNavScript = document.createElement('script');
+        userNavScript.src = '../js/user_nav.js';
+        userNavScript.defer = true;
+        document.body.appendChild(userNavScript);
+      };
+      document.body.appendChild(navScript);
+    }).catch(err => console.error('Component load failed', err));
+  </script>
+  <script type="module">
+    // Import product card renderer for bestsellers section
+    import { renderProductGrid } from '../js/user_components/product-card-renderer.js';
+    window.renderProductGrid = renderProductGrid;
+  </script>
+  
+  <script src="js/config.js"></script>
+  <script src="js/cart.js" defer></script>
+  <script src="js/user/user_cart.js" defer></script>
+
+  <script>
+    // Prevent FOUC by ensuring content loads smoothly
+    document.addEventListener('DOMContentLoaded', function() {
+      // Wait for navbar and breadcrumbs to be loaded first
+      const checkComponents = setInterval(() => {
+        const navbar = document.getElementById('navbar');
+        const breadcrumb = document.getElementById('breadcrumb-root');
+        
+        // Check if navbar is loaded (required)
+        const navbarLoaded = navbar && navbar.children.length > 0;
+        
+        // Check if breadcrumb is loaded (optional - some pages don't have breadcrumbs)
+        const breadcrumbLoaded = !breadcrumb || breadcrumb.children.length > 0;
+        
+        if (navbarLoaded && breadcrumbLoaded) {
+          clearInterval(checkComponents);
+          
+          // Then show main content
+          setTimeout(() => {
+            const main = document.querySelector('main');
+            if (main) {
+              main.classList.add('loaded');
+              // Remove the loading overlay if it exists
+              const overlay = document.getElementById('nav-loading-overlay');
+              if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 300);
+              }
+              
+              // Show banners LAST after everything else is loaded
+              setTimeout(() => {
+                document.body.classList.add('banners-loaded');
+              }, 300);
+            }
+          }, 200);
+        }
+      }, 50);
+      
+      // Fallback: show content after max 2 seconds
+      setTimeout(() => {
+        const main = document.querySelector('main');
+        if (main && !main.classList.contains('loaded')) {
+          main.classList.add('loaded');
+        }
+        // Show banners in fallback too
+        if (!document.body.classList.contains('banners-loaded')) {
+          document.body.classList.add('banners-loaded');
+        }
+      }, 2000);
+    });
+  </script>
+</body>
+</html>

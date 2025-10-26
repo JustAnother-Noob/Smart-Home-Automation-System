@@ -1,0 +1,215 @@
+<link rel="stylesheet" href="css/main.css" />
+
+<div class="shipping-banner">
+  <div class="shipping-container">
+    <p class="shipping-text">Free shipping on orders over $199</p>
+  </div>
+</div>
+
+  <script>
+  (function(){
+    const API = (window.CONFIG && CONFIG.API_URL ? CONFIG.API_URL : '/api').replace(/\/$/, '');
+
+    async function refresh(){
+      const desk = document.getElementById('cart-count');
+      const mobile = document.getElementById('mobile-cart-count');
+      try {
+        // Prefer modern CartClient if available
+        if (window.CartClient && typeof window.CartClient.getCart === 'function') {
+          const data = await window.CartClient.getCart();
+          const cart = data && data.cart ? data.cart : data;
+          let count = 0;
+          if (cart) {
+            if (typeof cart.totalItems === 'number') count = cart.totalItems;
+            else if (typeof cart.totalQuantity === 'number') count = cart.totalQuantity;
+            else if (Array.isArray(cart.items)) count = cart.items.reduce((s,i)=>s+(Number(i.quantity)||0),0);
+          }
+          if (desk) desk.textContent = count;
+          if (mobile) mobile.textContent = count;
+          return;
+        }
+
+        const sessionId = localStorage.getItem('cartSessionId');
+        if (!sessionId) return;
+        const res = await fetch(`${API}/cart`, { headers: { 'x-session-id': sessionId }});
+        const data = await res.json();
+        const count = (data.cart?.items||[]).reduce((s,i)=>s+(Number(i.quantity)||0),0);
+        if (desk) desk.textContent = count;
+        if (mobile) mobile.textContent = count;
+      } catch (e) {
+      }
+    }
+
+    document.addEventListener('cart:updated', () => refresh());
+    document.addEventListener('DOMContentLoaded', () => refresh());
+  })();
+  </script>
+
+<div class="navbar-main">
+  <div class="navbar-main-container">
+    
+    <button class="mobile-menu-button" id="mobile-menu-button" aria-label="Open menu" aria-expanded="false">
+      <i class="fi fi-rr-menu-burger"></i>
+    </button>
+
+    <div class="navbar-logo">
+      <a href="user_index.html" aria-label="Home">
+        <img src="assets/logo.png" alt="Smart Living Tech" />
+      </a>
+    </div>
+
+    <div class="navbar-search navbar-search-desktop">
+      <div class="search-container">
+        <input
+          type="text"   
+          placeholder="Search for smart home products..."
+          class="search-input"
+          id="search-input"
+          autocomplete="off"
+        />
+        <button type="button" class="search-button">
+          <i class="fi fi-rr-search"></i>
+        </button>
+        
+        <div class="search-suggestions" id="search-suggestions" style="display: none;">
+          <div class="suggestions-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-icons">
+      
+      <div class="navbar-icon">
+        <a href="user_contact.html" aria-label="Contact us">
+          <i class="fi fi-rr-headset"></i>
+        </a>
+      </div>
+
+      <div class="navbar-icon account-dropdown" id="accountDropdown">
+        <button id="account-link" aria-label="My Account" aria-haspopup="true" aria-expanded="false" type="button">
+          <i class="fi fi-rr-user" id="accountIcon"></i>
+          <span class="account-initial" id="accountInitial" style="display:none;"></span>
+        </button>
+            <div class="account-menu" id="accountMenu">
+          
+        </div>
+      </div>
+
+      <div class="navbar-icon">
+        <a href="user_cart.html" aria-label="Shopping Cart" class="cart-link">
+          <i class="fi fi-rr-shopping-cart"></i>
+          <span class="cart-count" id="cart-count">0</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="navbar-search-mobile">
+    <div class="search-container">
+      <input
+        type="text"   
+        placeholder="Search products..."
+        class="search-input"
+        id="search-input-mobile"
+        autocomplete="off"
+      />
+      <button type="button" class="search-button">
+        <i class="fi fi-rr-search"></i>
+      </button>
+      
+      <div class="search-suggestions" id="search-suggestions-mobile" style="display: none;">
+        <div class="suggestions-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar-menu">
+  <div class="navbar-menu-container">
+    <ul class="navbar-links">
+      <li>
+         <a href="user_products.html?clearance=true" class="nav-link" id="clearance-link">
+           Clearance
+         </a>
+       </li>
+      <li>
+  <a href="user_products.html?category=security" class="nav-link">
+          Security Cameras
+        </a>
+      </li>
+      <li>
+  <a href="user_products.html?category=climate+control" class="nav-link">
+          Thermostats
+        </a>
+      </li>
+      <li>
+  <a href="user_products.html?category=lighting" class="nav-link">
+          Smart Lighting
+        </a>
+      </li>
+      <li>
+  <a href="user_products.html?category=automation+kits" class="nav-link">
+          Automation Kits
+        </a>
+      </li>
+      <li>
+        <a href="user_track_order.html" class="nav-link">
+          Track Orders
+        </a>
+      </li>
+      <li>
+        <a href="user_installation.html" class="nav-link">
+          Installation
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<nav class="mobile-bottom-nav">
+  <div class="mobile-bottom-nav-container">
+    <div class="mobile-nav-item" data-menu="products">
+      <i class="fi fi-rr-apps"></i>
+      <span>Products</span>
+    </div>
+    
+    <div class="mobile-nav-item" data-menu="services">
+      <i class="fi fi-rr-tool-box"></i>
+      <span>Services</span>
+    </div>
+    
+    <a href="user_index.html" class="mobile-nav-item">
+      <i class="fi fi-rr-home"></i>
+      <span>Home</span>
+    </a>
+    
+    <a href="user_cart.html" class="mobile-nav-item">
+      <i class="fi fi-rr-shopping-cart"></i>
+      <span>Cart</span>
+      <span class="cart-count" id="mobile-cart-count">0</span>
+    </a>
+    
+    <a href="user_login.html" id="mobile-account-link" class="mobile-nav-item">
+      <i class="fi fi-rr-user"></i>
+      <span>Account</span>
+    </a>
+  </div>
+</nav>
+
+<div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+
+<div class="mobile-bottom-menu" id="mobile-bottom-menu">
+  <div class="mobile-menu-header modern">
+    <h3 class="mobile-menu-title" id="mobile-menu-title">
+      <span class="menu-title-text">Menu</span>
+    </h3>
+    <button class="mobile-menu-close modern" id="mobile-menu-close" aria-label="Close menu">
+      <span class="close-icon-bg">
+        <i class="fi fi-rr-cross"></i>
+      </span>
+    </button>
+  </div>
+  <div class="mobile-menu-content" id="mobile-menu-content">
+    
+  </div>
+</div>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Smart Living Tech - Coupon Management</title>
+    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="css/admin-top-nav.css" />
+    <link rel="stylesheet" href="css/modal.css" />
+    <link rel="stylesheet" href="css/coupon-validation.css" />
+    <link rel="stylesheet" href="css/components/coupon-modal.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('adminDarkMode');
+          const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          
+          if (savedTheme === 'dark' || (savedTheme === null && systemPrefersDark)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) {
+          // Silently fail if localStorage is not available
+        }
+      })();
+    </script>
+</head>
+<body>
+    
+    <div class="admin-loading-overlay" id="globalLoadingOverlay">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <div class="container">
+        
+        <nav class="admin-top-nav" id="adminTopNav" role="navigation" aria-label="Admin navigation">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <img src="https://res.cloudinary.com/dkx5o5nqk/image/upload/v1759927622/logo_without_background_n42aqy.png" alt="Smart Home Logo" class="nav-logo-img">
+                    <span class="nav-brand">Smart Living Tech Admin</span>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="adminHome.html"><i class="fas fa-tachometer-alt" aria-hidden="true"></i> <span class="nav-text">Dashboard</span></a></li>
+                    <li class="nav-item"><a href="adminUsers.html"><i class="fas fa-users" aria-hidden="true"></i> <span class="nav-text">Users</span></a></li>
+                    <li class="nav-item"><a href="adminProducts.html"><i class="fas fa-box" aria-hidden="true"></i> <span class="nav-text">Products</span></a></li>
+                    <li class="nav-item"><a href="adminOrders.html"><i class="fas fa-shopping-cart" aria-hidden="true"></i> <span class="nav-text">Orders</span></a></li>
+                    <li class="nav-item"><a href="adminInstallations.html"><i class="fas fa-tools" aria-hidden="true"></i> <span class="nav-text">Installations</span></a></li>
+                    <li class="nav-item active"><a href="adminCoupons.html" aria-current="page"><i class="fas fa-ticket-alt" aria-hidden="true"></i> <span class="nav-text">Coupons</span></a></li>
+                    <li class="nav-item"><a href="adminNetworkLogs.html"><i class="fas fa-network-wired" aria-hidden="true"></i> <span class="nav-text">Network Logs</span></a></li>
+                    <li class="nav-item"><a href="adminSettings.html"><i class="fas fa-cog" aria-hidden="true"></i> <span class="nav-text">Settings</span></a></li>
+                </ul>
+
+                <div class="nav-user-info">
+                    <span class="nav-welcome-text">Welcome,</span>
+                    <span class="nav-admin-name" id="adminNameDisplay">Admin</span>
+                    <button id="headerLogoutBtn" class="nav-logout-btn" title="Logout">
+                        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+                
+                <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                    <i class="fas fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-content" role="main">
+            <div class="content">
+                <section id="coupons-page" class="page-section" aria-labelledby="coupons-heading">
+                    <div class="card">
+                        <header class="card-header">
+                            <div class="action-bar">
+                                <div class="section-header">
+                                    <h2 id="coupons-heading" class="no-margin">Coupon Management</h2>
+                                    <p class="section-description">Create, edit, and manage all discount coupons and promotional codes.</p>
+                                </div>
+                                <div class="button-group">
+                                    <button id="addCouponBtn" class="btn btn-success"><i class="fas fa-plus" aria-hidden="true"></i> Add Coupon</button>
+                                    <button id="refreshCoupons" class="btn btn-primary" title="Refresh coupons" aria-label="Refresh coupons">
+                                        <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                                        <span>Refresh</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </header>
+                        <div class="card-body">
+                            
+                            <div class="filters-section">
+                                <div class="filter-group">
+                                    <label for="statusFilter" class="sr-only">Filter by status</label>
+                                    <select id="statusFilter" class="filter-select" aria-label="Filter by status">
+                                        <option value="">All Status</option>
+                                        <option value="true">Active</option>
+                                        <option value="false">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label for="sortFilter" class="sr-only">Sort coupons</label>
+                                    <select id="sortFilter" class="filter-select" aria-label="Sort coupons">
+                                        <option value="newest">Newest First</option>
+                                        <option value="oldest">Oldest First</option>
+                                        <option value="code-asc">Code (A-Z)</option>
+                                        <option value="code-desc">Code (Z-A)</option>
+                                        <option value="discount-asc">Discount (Low to High)</option>
+                                        <option value="discount-desc">Discount (High to Low)</option>
+                                        <option value="expiry-asc">Expiry (Earliest)</option>
+                                        <option value="expiry-desc">Expiry (Latest)</option>
+                                        <option value="usage-asc">Usage (Low to High)</option>
+                                        <option value="usage-desc">Usage (High to Low)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="couponsStatusMessage" class="status-message" role="status" aria-live="polite"></div>
+                            <div class="loading-spinner" id="couponsLoadingSpinner" role="status" aria-live="polite" data-text="Loading coupons..."></div>
+                            <div class="table-responsive">
+                                <table class="data-table compact" id="couponsTable" role="table" aria-label="Coupons data table">
+                                    <caption class="sr-only">List of discount coupons with details and management actions</caption>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Code</th>
+                                            <th scope="col">Discount</th>
+                                            <th scope="col">Min Order</th>
+                                            <th scope="col">Expires</th>
+                                            <th scope="col">Usage Limit</th>
+                                            <th scope="col">Per User</th>
+                                            <th scope="col">Comments</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="couponsTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="couponModal" class="coupon-modal" role="dialog" aria-modal="true" aria-labelledby="couponModalTitle">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h2 id="couponModalTitle">
+                        <i class="fas fa-ticket-alt"></i>
+                        Add New Coupon
+                    </h2>
+                    <p class="modal-subtitle">Create promotional codes and discount offers</p>
+                </div>
+                <button class="close-modal" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="couponFormStatus" class="status-message" style="display: none;"></div>
+                
+                <form id="couponForm">
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-info-circle"></i>
+                            Basic Information
+                        </h3>
+                        <div class="form-row three-columns">
+                            <div class="form-group">
+                                <label for="code" class="required">Coupon Code</label>
+                                <input type="text" id="code" required placeholder="e.g., SAVE20" />
+                                <span class="form-help">Unique code customers will enter</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="discountType" class="required">Discount Type</label>
+                                <select id="discountType" required>
+                                    <option value="%">Percentage (%)</option>
+                                    <option value="$">Fixed Amount ($)</option>
+                                </select>
+                                <span class="form-help">Choose percentage or fixed amount</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="discountValue" class="required">Discount Value</label>
+                                <input type="number" id="discountValue" step="0.01" required placeholder="0.00" />
+                                <span class="form-help">Amount or percentage to discount</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-cog"></i>
+                            Usage Settings
+                        </h3>
+                        <div class="validation-info">
+                            <div class="info-box">
+                                <i class="fas fa-info-circle"></i>
+                                <div class="info-content">
+                                    <strong>Validation Rules:</strong>
+                                    <ul>
+                                        <li>Total usage limit must be greater than or equal to per-user limit</li>
+                                        <li>Per-user limit cannot be 0 when total usage limit is set</li>
+                                        <li>Percentage discounts cannot exceed 100%</li>
+                                        <li>Discount values cannot be negative</li>
+                                        <li>Expiration date must be in the future</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row three-columns">
+                            <div class="form-group">
+                                <label for="minimumOrderAmount">Min. Order Amount</label>
+                                <input type="number" id="minimumOrderAmount" step="0.01" placeholder="0.00" />
+                                <span class="form-help">Minimum cart value required</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="usageLimit">Usage Limit</label>
+                                <input type="number" id="usageLimit" min="0" placeholder="Unlimited" />
+                                <span class="form-help">Max times this coupon can be used</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="perUserLimit">Per-User Limit</label>
+                                <input type="number" id="perUserLimit" min="0" placeholder="1" />
+                                <span class="form-help">Max uses per customer</span>
+                            </div>
+                        </div>
+                        <div class="form-row two-columns">
+                            <div class="form-group">
+                                <label for="expirationDate">Expiration Date</label>
+                                <input type="date" id="expirationDate" />
+                                <span class="form-help">Leave empty for no expiration</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="isActive">Status</label>
+                                <select id="isActive">
+                                    <option value="true">Active</option>
+                                    <option value="false">Inactive</option>
+                                </select>
+                                <span class="form-help">Whether this coupon can be used</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-comment"></i>
+                            Comments
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="comments">Internal Comments</label>
+                                <textarea id="comments" rows="3" placeholder="Internal notes about this coupon..."></textarea>
+                                <span class="form-help">Notes for admin reference (not visible to customers)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary close-modal">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </button>
+                        <button id="saveCouponBtn" class="btn btn-primary" type="submit">
+                            <i class="fas fa-save"></i>
+                            Save Coupon
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/init.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/admin-top-nav.js"></script>
+    <script src="js/logout.js"></script>
+    <script src="js/admin_js/darkMode.js"></script>
+    <script src="js/admin_js/refresh-utils.js"></script>
+    <script src="js/admin_js/adminCoupons.js"></script>
+    <script src="js/admin_js/admin-utils.js"></script>
+    <script src="js/auth-utils.js"></script>
+    <script src="js/admin_js/admin-header.js"></script>
+</body>
+</html>

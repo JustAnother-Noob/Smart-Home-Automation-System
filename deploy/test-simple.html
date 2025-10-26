@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Admin Products Test</title>
+</head>
+<body>
+    <h1>Simple Test</h1>
+    <button onclick="testAPI()">Test API Call</button>
+    <div id="results"></div>
+
+    <script>
+        async function testAPI() {
+            const results = document.getElementById('results');
+            results.innerHTML = 'Testing...';
+            
+            try {
+                // Test basic API call
+                const response = await fetch('/api/products?limit=3');
+                const data = await response.json();
+                
+                results.innerHTML = `
+                    <h3>Basic API Test:</h3>
+                    <p>Status: ${response.status}</p>
+                    <p>Products returned: ${data.products?.length || 0}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                
+                // Test search
+                const searchResponse = await fetch('/api/products?search=smart&limit=3');
+                const searchData = await searchResponse.json();
+                
+                results.innerHTML += `
+                    <h3>Search Test:</h3>
+                    <p>Status: ${searchResponse.status}</p>
+                    <p>Products found: ${searchData.products?.length || 0}</p>
+                    <pre>${JSON.stringify(searchData, null, 2)}</pre>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Living Tech - Transform Your Home</title>
+  <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+
+  <style>
+    /* Prevent layout shift during loading */
+    * { box-sizing: border-box; }
+    body { 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Inter', sans-serif; 
+      background-color: #ffffff;
+      overflow-x: hidden;
+    }
+    html { scroll-behavior: smooth; }
+    #navbar { 
+      min-height: 85px; 
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: white;
+    }
+    main { 
+      opacity: 0; 
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+    main.loaded { 
+      opacity: 1; 
+      visibility: visible;
+    }
+    /* Prevent container blinking/flashing */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      box-sizing: border-box;
+    }
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    /* Hide banners initially to prevent blinking - show them last */
+    .shipping-banner, .promo-banner, .info-banner, .info-banner-small {
+      box-sizing: border-box;
+      width: 100%;
+      position: relative;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+      height: auto;
+      min-height: 40px;
+    }
+    .info-banner-icon, .info-banner-content, .info-banner-actions {
+      box-sizing: border-box;
+      position: relative;
+    }
+    /* Show banners after everything else is loaded */
+    .banners-loaded .shipping-banner,
+    .banners-loaded .promo-banner,
+    .banners-loaded .info-banner,
+    .banners-loaded .info-banner-small {
+      opacity: 1;
+      visibility: visible;
+    }
+    /* Prevent breadcrumb blinking */
+    #breadcrumb-root, .breadcrumb, .breadcrumb-nav {
+      box-sizing: border-box;
+      width: 100%;
+      position: relative;
+      min-height: 24px;
+      margin: 0;
+      padding: 8px 0;
+    }
+    /* Prevent content flash */
+    .hero-section, .products-section, .cta-section {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    main.loaded .hero-section,
+    main.loaded .products-section, 
+    main.loaded .cta-section {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/layout/user_navbar.css">
+  <link rel="stylesheet" href="css/components/similar-products.css">
+  <link rel="stylesheet" href="css/components/user-product-card.css">
+  <link rel="stylesheet" href="css/pages/user_index.css">
+  <link rel="stylesheet" href="css/layout/user_footer.css">
+
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="js/config.js"></script>
+
+  <script src="js/loadNav.js"></script>
+</head>
+<body>
+
+  <div id="navbar"></div>
+
+  <div id="notification-root"></div>
+  <script src="js/components/notification-loader.js" defer></script>
+
+  <main>
+    
+    <section class="hero-section">
+      <div class="hero-carousel">
+        <div class="carousel-container">
+          
+          <div class="carousel-slide active">
+            <img src="assets/images/hero_main.png" alt="Smart Home Automation Banner 1">
+            <div class="carousel-overlay">
+              <div class="carousel-content">
+                <h1 class="carousel-title">Transform Your Living Space</h1>
+                <p class="carousel-description">Experience the future of home automation with our cutting-edge smart devices</p>
+                <div class="carousel-buttons">
+                  <a href="user_products.html" class="btn btn-primary-hero">Shop All Products</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-slide">
+            <img src="assets/images/hero_camera.png" alt="Smart Home Automation Banner 2">
+            <div class="carousel-overlay">
+              <div class="carousel-content">
+                <h1 class="carousel-title">Security & Peace of Mind</h1>
+                <p class="carousel-description">Monitor and protect your home with advanced security systems</p>
+                <div class="carousel-buttons">
+                  <a href="user_products.html?category=Security%20Cameras" class="btn btn-primary-hero">Shop Security Cameras</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-slide">
+            <img src="assets/images/hero_light.png" alt="Smart Home Automation Banner 3">
+            <div class="carousel-overlay">
+              <div class="carousel-content">
+                <h1 class="carousel-title">Smart Lighting Solutions</h1>
+                <p class="carousel-description">Control your home's ambiance with intelligent lighting systems</p>
+                <div class="carousel-buttons">
+                  <a href="user_products.html?category=Smart%20Lighting" class="btn btn-primary-hero">Shop Smart Lighting</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-slide">
+            <img src="assets/images/hero_thermostat.png" alt="Smart Home Automation Banner 4">
+            <div class="carousel-overlay">
+              <div class="carousel-content">
+                <h1 class="carousel-title">Climate Control</h1>
+                <p class="carousel-description">Optimize comfort and save energy with smart thermostats</p>
+                <div class="carousel-buttons">
+                  <a href="user_products.html?category=Climate%20Control" class="btn btn-primary-hero">Shop Climate Control</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-slide">
+            <img src="assets/images/hero_automation.png" alt="Smart Home Automation Banner 5">
+            <div class="carousel-overlay">
+              <div class="carousel-content">
+                <h1 class="carousel-title">Complete Smart Home</h1>
+                <p class="carousel-description">Get started with our comprehensive automation packages</p>
+                <div class="carousel-buttons">
+                  <a href="user_products.html?category=Home%20Automation%20Kits" class="btn btn-primary-hero">Shop Automation Kits</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="carousel-btn carousel-btn-prev" aria-label="Previous slide">
+          <i class="fi fi-rr-angle-left"></i>
+        </button>
+        <button class="carousel-btn carousel-btn-next" aria-label="Next slide">
+          <i class="fi fi-rr-angle-right"></i>
+        </button>
+
+        <div class="carousel-indicators">
+          <button class="indicator active" data-slide="0" aria-label="Go to slide 1"></button>
+          <button class="indicator" data-slide="1" aria-label="Go to slide 2"></button>
+          <button class="indicator" data-slide="2" aria-label="Go to slide 3"></button>
+          <button class="indicator" data-slide="3" aria-label="Go to slide 4"></button>
+          <button class="indicator" data-slide="4" aria-label="Go to slide 5"></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="categories" class="categories-section">
+      <div class="container">
+        
+        <div class="category-showcase" id="sales-showcase">
+          <div class="category-header">
+            <h3 class="category-title">🔥 Products On Sale</h3>
+            <a href="user_products.html?clearance=true" class="category-view-all">
+              View All <i class="fi fi-rr-arrow-right"></i>
+            </a>
+          </div>
+          <div id="sales-loading" class="category-loading">
+            <div class="loading-spinner"></div>
+            <p>Loading products...</p>
+          </div>
+          <div class="category-products-wrapper">
+            <button class="scroll-btn scroll-left" data-category="sales" aria-label="Scroll left">
+              <i class="fi fi-rr-angle-left"></i>
+            </button>
+            <button class="scroll-btn scroll-right" data-category="sales" aria-label="Scroll right">
+              <i class="fi fi-rr-angle-right"></i>
+            </button>
+            <div id="sales-products" class="similar-products-grid horizontal-scroll"></div>
+          </div>
+        </div>
+
+        <div class="category-showcase" id="security-showcase">
+          <div class="category-header">
+            <h3 class="category-title">Security</h3>
+            <a href="user_products.html?category=security" class="category-view-all">
+              View All <i class="fi fi-rr-arrow-right"></i>
+            </a>
+          </div>
+          <div id="security-loading" class="category-loading">
+            <div class="loading-spinner"></div>
+            <p>Loading products...</p>
+          </div>
+          <div class="category-products-wrapper">
+            <button class="scroll-btn scroll-left" data-category="security" aria-label="Scroll left">
+              <i class="fi fi-rr-angle-left"></i>
+            </button>
+            <button class="scroll-btn scroll-right" data-category="security" aria-label="Scroll right">
+              <i class="fi fi-rr-angle-right"></i>
+            </button>
+            <div id="security-products" class="similar-products-grid horizontal-scroll"></div>
+          </div>
+        </div>
+
+        <div class="category-showcase" id="lighting-showcase">
+          <div class="category-header">
+            <h3 class="category-title">Smart Lighting</h3>
+            <a href="user_products.html?category=lighting" class="category-view-all">
+              View All <i class="fi fi-rr-arrow-right"></i>
+            </a>
+          </div>
+          <div id="lighting-loading" class="category-loading">
+            <div class="loading-spinner"></div>
+            <p>Loading products...</p>
+          </div>
+          <div class="category-products-wrapper">
+            <button class="scroll-btn scroll-left" data-category="lighting" aria-label="Scroll left">
+              <i class="fi fi-rr-angle-left"></i>
+            </button>
+            <button class="scroll-btn scroll-right" data-category="lighting" aria-label="Scroll right">
+              <i class="fi fi-rr-angle-right"></i>
+            </button>
+            <div id="lighting-products" class="similar-products-grid horizontal-scroll"></div>
+          </div>
+        </div>
+
+        <div class="category-showcase" id="climate-showcase">
+          <div class="category-header">
+            <h3 class="category-title">Climate Control</h3>
+            <a href="user_products.html?category=climate+control" class="category-view-all">
+              View All <i class="fi fi-rr-arrow-right"></i>
+            </a>
+          </div>
+          <div id="climate-loading" class="category-loading">
+            <div class="loading-spinner"></div>
+            <p>Loading products...</p>
+          </div>
+          <div class="category-products-wrapper">
+            <button class="scroll-btn scroll-left" data-category="climate" aria-label="Scroll left">
+              <i class="fi fi-rr-angle-left"></i>
+            </button>
+            <button class="scroll-btn scroll-right" data-category="climate" aria-label="Scroll right">
+              <i class="fi fi-rr-angle-right"></i>
+            </button>
+            <div id="climate-products" class="similar-products-grid horizontal-scroll"></div>
+          </div>
+        </div>
+
+        <div class="category-showcase" id="automation-showcase">
+          <div class="category-header">
+            <h3 class="category-title">Automation Kits</h3>
+            <a href="user_products.html?category=automation+kits" class="category-view-all">
+              View All <i class="fi fi-rr-arrow-right"></i>
+            </a>
+          </div>
+          <div id="automation-loading" class="category-loading">
+            <div class="loading-spinner"></div>
+            <p>Loading products...</p>
+          </div>
+          <div class="category-products-wrapper">
+            <button class="scroll-btn scroll-left" data-category="automation" aria-label="Scroll left">
+              <i class="fi fi-rr-angle-left"></i>
+            </button>
+            <button class="scroll-btn scroll-right" data-category="automation" aria-label="Scroll right">
+              <i class="fi fi-rr-angle-right"></i>
+            </button>
+            <div id="automation-products" class="similar-products-grid horizontal-scroll"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="best-sellers" class="best-sellers-section">
+      
+    </section>
+
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-grid">
+          
+          <div class="cta-card cta-track">
+            <div class="cta-icon">
+              <i class="fas fa-shipping-fast"></i>
+            </div>
+            <div class="cta-content">
+              <h3>Track Your Order</h3>
+              <p>Get real-time updates on your order status and delivery information</p>
+              <a href="user_track_order.html" class="cta-btn btn-primary">
+                <i class="fas fa-search"></i>
+                <span>Track Order</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="cta-card cta-installation">
+            <div class="cta-icon">
+              <i class="fas fa-tools"></i>
+            </div>
+            <div class="cta-content">
+              <h3>Book Installation</h3>
+              <p>Schedule professional installation for your smart home devices</p>
+              <a href="user_installation.html" class="cta-btn btn-primary">
+                <i class="fas fa-calendar-check"></i>
+                <span>Book Now</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials-section">
+      <div class="container">
+        <div class="testimonials-header">
+          <h2>What Our Customers Say</h2>
+          <p>Real experiences from real customers</p>
+        </div>
+        
+        <div class="testimonials-wrapper">
+          <button class="scroll-btn scroll-left" data-target="testimonials-grid" aria-label="Scroll left">
+            <i class="fi fi-rr-angle-left"></i>
+          </button>
+          <button class="scroll-btn scroll-right" data-target="testimonials-grid" aria-label="Scroll right">
+            <i class="fi fi-rr-angle-right"></i>
+          </button>
+          <div class="testimonials-grid" id="testimonials-grid">
+          
+          <div class="testimonial-card">
+            <div class="testimonial-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              "The smart lighting system has completely transformed my home. Installation was seamless, and the customer support team was incredibly helpful throughout the process."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="author-info">
+                <h4>Sarah Johnson</h4>
+                <span>Smart Lighting Customer</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              "Best investment for home security! The camera quality is excellent, and being able to monitor my home from anywhere gives me peace of mind."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="author-info">
+                <h4>Michael Chen</h4>
+                <span>Security System Customer</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              "Outstanding service! The automation kit made my daily routine so much easier. Energy savings are noticeable, and the app is very user-friendly."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="author-info">
+                <h4>Emma Davis</h4>
+                <span>Automation Kit Customer</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              "The smart thermostat has been a game changer! My energy bills have dropped significantly, and I love being able to control the temperature remotely."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="author-info">
+                <h4>James Wilson</h4>
+                <span>Climate Control Customer</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              "Fantastic products and even better customer service! The installation team was professional, and they took the time to explain everything. Highly recommend!"
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="author-info">
+                <h4>Lisa Martinez</h4>
+                <span>Complete Home Setup Customer</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              "Smart Living Tech exceeded my expectations. The doorbell camera is crystal clear, and the motion detection works perfectly. Great value for money!"
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="author-info">
+                <h4>David Thompson</h4>
+                <span>Security Customer</span>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="js/cart.js" defer></script>
+
+  <script type="module">
+    import { renderProductGrid } from '../js/user_components/product-card-renderer.js';
+    window.renderProductGrid = renderProductGrid;
+  </script>
+
+  <script src="js/pages/user_index.js" defer></script>
+
+  <script>
+    // Prevent FOUC by ensuring content loads smoothly
+    document.addEventListener('DOMContentLoaded', function() {
+      // Wait for navbar and breadcrumbs to be loaded first
+      const checkComponents = setInterval(() => {
+        const navbar = document.getElementById('navbar');
+        const breadcrumb = document.getElementById('breadcrumb-root');
+        
+        // Check if navbar is loaded (required)
+        const navbarLoaded = navbar && navbar.children.length > 0;
+        
+        // Check if breadcrumb is loaded (optional - some pages don't have breadcrumbs)
+        const breadcrumbLoaded = !breadcrumb || breadcrumb.children.length > 0;
+        
+        if (navbarLoaded && breadcrumbLoaded) {
+          clearInterval(checkComponents);
+          
+          // Then show main content
+          setTimeout(() => {
+            const main = document.querySelector('main');
+            if (main) {
+              main.classList.add('loaded');
+              // Remove the loading overlay if it exists
+              const overlay = document.getElementById('nav-loading-overlay');
+              if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 300);
+              }
+              
+              // Show banners LAST after everything else is loaded
+              setTimeout(() => {
+                document.body.classList.add('banners-loaded');
+              }, 300);
+            }
+          }, 200);
+        }
+      }, 50);
+      
+      // Fallback: show content after max 2 seconds
+      setTimeout(() => {
+        const main = document.querySelector('main');
+        if (main && !main.classList.contains('loaded')) {
+          main.classList.add('loaded');
+        }
+        // Show banners in fallback too
+        if (!document.body.classList.contains('banners-loaded')) {
+          document.body.classList.add('banners-loaded');
+        }
+      }, 2000);
+    });
+  </script>
+</body>
+</html>

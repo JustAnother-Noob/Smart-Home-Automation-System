@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Living Tech - Admin Dashboard</title>
+    <link rel="stylesheet" href="css/products.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/admin-top-nav.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('adminDarkMode');
+          const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          
+          if (savedTheme === 'dark' || (savedTheme === null && systemPrefersDark)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) {
+          // Silently fail if localStorage is not available
+        }
+      })();
+    </script>
+</head>
+<body>
+    
+    <div class="admin-loading-overlay" id="globalLoadingOverlay">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <div class="container">
+        
+        <nav class="admin-top-nav" id="adminTopNav" role="navigation" aria-label="Admin navigation">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <img src="https://res.cloudinary.com/dkx5o5nqk/image/upload/v1759927622/logo_without_background_n42aqy.png" alt="Smart Home Logo" class="nav-logo-img">
+                    <span class="nav-brand">Smart Living Tech Admin</span>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item active"><a href="adminHome.html" aria-current="page"><i class="fas fa-tachometer-alt" aria-hidden="true"></i> <span class="nav-text">Dashboard</span></a></li>
+                    <li class="nav-item"><a href="adminUsers.html"><i class="fas fa-users" aria-hidden="true"></i> <span class="nav-text">Users</span></a></li>
+                    <li class="nav-item"><a href="adminProducts.html"><i class="fas fa-box" aria-hidden="true"></i> <span class="nav-text">Products</span></a></li>
+                    <li class="nav-item"><a href="adminOrders.html"><i class="fas fa-shopping-cart" aria-hidden="true"></i> <span class="nav-text">Orders</span></a></li>
+                    <li class="nav-item"><a href="adminInstallations.html"><i class="fas fa-tools" aria-hidden="true"></i> <span class="nav-text">Installations</span></a></li>
+                    <li class="nav-item"><a href="adminCoupons.html"><i class="fas fa-ticket-alt" aria-hidden="true"></i> <span class="nav-text">Coupons</span></a></li>
+                    <li class="nav-item"><a href="adminNetworkLogs.html"><i class="fas fa-network-wired" aria-hidden="true"></i> <span class="nav-text">Network Logs</span></a></li>
+                    <li class="nav-item"><a href="adminSettings.html"><i class="fas fa-cog" aria-hidden="true"></i> <span class="nav-text">Settings</span></a></li>
+                </ul>
+
+                <div class="nav-user-info">
+                    <span class="nav-welcome-text">Welcome,</span>
+                    <span class="nav-admin-name" id="adminNameDisplay">Admin</span>
+                    <button id="headerLogoutBtn" class="nav-logout-btn" title="Logout">
+                        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+                
+                <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                    <i class="fas fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-content" role="main">
+            <div class="content">
+                
+                <div class="dashboard-header">
+                    <div>
+                        <h1 class="dashboard-title">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Dashboard Overview
+                        </h1>
+                        <p class="dashboard-subtitle">Welcome back! Here's what's happening with your smart home system today.</p>
+                    </div>
+                    <button id="refreshDashboard" class="btn btn-primary" title="Refresh dashboard" aria-label="Refresh dashboard data">
+                        <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                        <span>Refresh Data</span>
+                    </button>
+                </div>
+
+                <section class="quick-stats-section" aria-labelledby="stats-heading">
+                    <h2 id="stats-heading" class="sr-only">Quick Statistics</h2>
+                    <div class="quick-stats-grid">
+                        <div class="quick-stat-card stat-primary">
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-label">Total Orders</h3>
+                                <p class="stat-value" id="totalOrdersStat">0</p>
+                                <span class="stat-meta">All time orders</span>
+                            </div>
+                        </div>
+
+                        <div class="quick-stat-card stat-success">
+                            <div class="stat-icon">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-label">Active Users</h3>
+                                <p class="stat-value" id="activeUsersStat">0</p>
+                                <span class="stat-meta">Verified accounts</span>
+                            </div>
+                        </div>
+
+                        <div class="quick-stat-card stat-warning">
+                            <div class="stat-icon">
+                                <i class="fas fa-box-open"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-label">Total Products</h3>
+                                <p class="stat-value" id="totalProductsStat">0</p>
+                                <span class="stat-meta">In catalog</span>
+                            </div>
+                        </div>
+
+                        <div class="quick-stat-card stat-info">
+                            <div class="stat-icon">
+                                <i class="fas fa-wrench"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-label">Installations</h3>
+                                <p class="stat-value" id="totalInstallationsStat">0</p>
+                                <span class="stat-meta">Total bookings</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="analytics-section" aria-labelledby="analytics-heading">
+                    <div class="section-header-large">
+                        <div>
+                            <h2 id="analytics-heading" class="section-title">
+                                <i class="fas fa-chart-bar"></i>
+                                Analytics & Insights
+                            </h2>
+                            <p class="section-subtitle">Real-time data visualization and performance metrics</p>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid-modern">
+                        
+                        <div class="chart-card">
+                            <div class="chart-card-header">
+                                <div>
+                                    <h3 class="chart-title">
+                                        <i class="fas fa-chart-area"></i>
+                                        Sales Performance
+                                    </h3>
+                                    <p class="chart-description">Track your sales trends and revenue over time</p>
+                                </div>
+                                <div class="chart-badge">Live Data</div>
+                            </div>
+                            <div class="chart-card-body">
+                                <div id="chart1Loading" class="loading-spinner" role="status">
+                                    <span>Loading analytics...</span>
+                                </div>
+                                <div id="chart1Error" class="error-state" role="alert" hidden>
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <p>Failed to load sales chart</p>
+                                    <button class="btn-retry">Try Again</button>
+                                </div>
+                                <div id="chart1Container" class="chart-container" hidden></div>
+                            </div>
+                        </div>
+
+                        <div class="chart-card">
+                            <div class="chart-card-header">
+                                <div>
+                                    <h3 class="chart-title">
+                                        <i class="fas fa-chart-pie"></i>
+                                        Analytics Dashboard
+                                    </h3>
+                                    <p class="chart-description">Monitor analytics with different time periods</p>
+                                </div>
+                                <div class="chart-controls">
+                                    <div class="chart-dropdown-container">
+                                        <label for="chart2Selector" class="chart-dropdown-label">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            Time Period:
+                                        </label>
+                                        <select id="chart2Selector" class="chart-dropdown" aria-label="Select chart time period">
+                                            <option value="weekly">Weekly</option>
+                                            <option value="hourly">Hourly</option>
+                                            <option value="weekly-by-date">Weekly by Date</option>
+                                            <option value="daily">Daily</option>
+                                        </select>
+                                        
+                                    </div>
+                                    <div class="chart-badge">Live Data</div>
+                                </div>
+                            </div>
+                            <div class="chart-card-body">
+                                <div id="chart2Loading" class="loading-spinner" role="status">
+                                    <span>Loading analytics...</span>
+                                </div>
+                                <div id="chart2Error" class="error-state" role="alert" hidden>
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <p>Failed to load analytics chart</p>
+                                    <button class="btn-retry">Try Again</button>
+                                </div>
+                                <div id="chart2Container" class="chart-container" hidden></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="activity-section" aria-labelledby="activity-heading">
+                    <div class="card activity-card">
+                        <header class="card-header">
+                            <div class="action-bar">
+                                <div class="section-header">
+                                    <h2 id="activity-heading" class="no-margin">
+                                        <i class="fas fa-history"></i>
+                                        Recent Activity
+                                    </h2>
+                                    <p class="section-description">Latest administrative actions and system events</p>
+                                </div>
+                                <div class="button-group">
+                                    <button class="btn btn-secondary" id="refreshActivity" title="Refresh recent activity" aria-label="Refresh recent activity">
+                                        <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                                        <span>Refresh</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </header>
+                        <div class="card-body">
+                            <div id="activity-loading" class="loading-spinner" role="status" aria-live="polite" data-text="Loading activity..."></div>
+                            <ul id="activityList" class="activity-list" role="list" aria-label="Recent admin activities">
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/init.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/auth-utils.js"></script>
+    <script src="js/logout.js"></script>
+    <script src="js/admin-top-nav.js"></script>
+    <script src="js/admin_js/darkMode.js"></script>
+
+    <script>
+        // Load MongoDB Charts SDK with fallback
+        (function() {
+            const sdkUrls = [
+                'https://unpkg.com/@mongodb-js/charts-embed-dom@3.3.1/dist/charts-embed-dom.umd.min.js',
+                'https://cdn.jsdelivr.net/npm/@mongodb-js/charts-embed-dom@3.3.1/dist/charts-embed-dom.umd.min.js',
+                '../js/vendor/charts-embed-dom.js' // Local fallback
+            ];
+            
+            let currentIndex = 0;
+            
+            function loadSDK() {
+                if (currentIndex >= sdkUrls.length) {
+                    console.error('❌ Failed to load MongoDB Charts SDK from all sources');
+                    console.error('Please check your internet connection or firewall settings');
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = sdkUrls[currentIndex];
+                script.async = false;
+                
+                script.onload = function() {
+                    console.log('✅ MongoDB Charts SDK loaded from:', sdkUrls[currentIndex]);
+                };
+                
+                script.onerror = function() {
+                    console.warn('⚠️ Failed to load from:', sdkUrls[currentIndex]);
+                    currentIndex++;
+                    loadSDK();
+                };
+                
+                document.head.appendChild(script);
+            }
+            
+            loadSDK();
+        })();
+    </script>
+    <script src="js/admin_js/refresh-utils.js"></script>
+    <script src="js/admin_js/adminHome.js"></script>
+    <script src="js/admin_js/admin-utils.js"></script>
+    <script src="js/admin_js/admin-header.js"></script>
+</body>
+</html>

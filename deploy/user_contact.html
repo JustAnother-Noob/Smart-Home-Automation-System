@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - Smart Living Tech</title>
+  <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/layout/user_navbar.css">
+  <link rel="stylesheet" href="css/pages/user_contact.css">
+  <link rel="stylesheet" href="css/layout/user_footer.css">
+
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="js/loadNav.js"></script>
+</head>
+<body>
+
+  <div id="navbar"></div>
+
+  <section class="contact-main-section">
+    
+    <div id="breadcrumb-root" data-breadcrumb-current="Contact Us"></div>
+    <script src="js/components/breadcrumb-loader.js" defer></script>
+
+    <div class="contact-container">
+
+        <div class="contact-info-wrapper">
+          <div class="contact-info-card">
+            <h2 class="section-title">Contact Information</h2>
+
+            <div class="info-row">
+              <div class="info-item-compact">
+                <div class="info-icon">
+                  <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="info-content">
+                  <h3>Address</h3>
+                  <p>6/127 Rundle Mall, Adelaide SA 5000, Australia</p>
+                </div>
+              </div>
+
+              <div class="info-item-compact">
+                <div class="info-icon">
+                  <i class="fas fa-phone"></i>
+                </div>
+                <div class="info-content">
+                  <h3>Phone</h3>
+                  <p><a href="tel:+61412369874">+61 412 369 874</a></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-item-compact">
+                <div class="info-icon">
+                  <i class="fas fa-envelope"></i>
+                </div>
+                <div class="info-content">
+                  <h3>Email</h3>
+                  <p><a href="mailto:smartlivingtech0@gmail.com">smartlivingtech0@gmail.com</a></p>
+                </div>
+              </div>
+
+              <div class="info-item-compact">
+                <div class="info-icon">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="info-content">
+                  <h3>Business Hours</h3>
+                  <p>Mon-Fri: 9AM-6PM<br>Sat: 10AM-4PM<br>Sun: Closed</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-row follow-us-row">
+              <div class="info-item-compact">
+                <div class="info-icon">
+                  <i class="fas fa-share-alt"></i>
+                </div>
+                <div class="info-content">
+                  <h3>Follow Us</h3>
+                  <div class="social-links">
+                    <a href="https://facebook.com" target="_blank" aria-label="Facebook" class="social-link">
+                      <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://twitter.com" target="_blank" aria-label="Twitter" class="social-link">
+                      <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://instagram.com" target="_blank" aria-label="Instagram" class="social-link">
+                      <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn" class="social-link">
+                      <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://youtube.com" target="_blank" aria-label="YouTube" class="social-link">
+                      <i class="fab fa-youtube"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="map-in-card">
+              <h3>Visit Our Location</h3>
+              <div class="map-wrapper-card">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3271.3386521680227!2d138.60414330000003!3d-34.9230428!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ab0ced474e04f45%3A0x4bbcdba5a6fc11e6!2sIIBIT-%20Federation%20University%20Australia%2C%20Adelaide%20Campus!5e0!3m2!1sen!2sau!4v1759929354778!5m2!1sen!2sau" 
+                  width="100%" 
+                  height="300" 
+                  style="border:0;" 
+                  allowfullscreen="" 
+                  loading="lazy" 
+                  referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form-wrapper">
+        <h2 class="section-title">Send us a Message</h2>
+        <p class="section-subtitle">Fill out the form below and we'll get back to you within 24 hours</p>
+        
+        <form id="contact-form" class="contact-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name <span class="required">*</span></label>
+              <input type="text" id="firstName" name="firstName" required>
+              <span class="error-message" id="firstName-error"></span>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name <span class="required">*</span></label>
+              <input type="text" id="lastName" name="lastName" required>
+              <span class="error-message" id="lastName-error"></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address <span class="required">*</span></label>
+            <input type="email" id="email" name="email" required>
+            <span class="error-message" id="email-error"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" maxlength="10">
+            <span class="error-message" id="phone-error"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Subject <span class="required">*</span></label>
+            <select id="subject" name="subject" required>
+              <option value="">Select a subject</option>
+              <option value="general">General Inquiry</option>
+              <option value="product">Product Information</option>
+              <option value="order">Order Status</option>
+              <option value="installation">Installation Services</option>
+              <option value="technical">Technical Support</option>
+              <option value="returns">Returns & Refunds</option>
+              <option value="feedback">Feedback</option>
+              <option value="other">Other</option>
+            </select>
+            <span class="error-message" id="subject-error"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message <span class="required">*</span></label>
+            <textarea id="message" name="message" rows="6" required minlength="10"></textarea>
+            <span class="error-message" id="message-error"></span>
+          </div>
+        <div id="form-message" class="form-message" style="display: none;"></div>
+
+          <button type="submit" class="btn btn-primary submit-btn">
+            <i class="fas fa-paper-plane"></i>
+            <span>Send Message</span>
+          </button>
+        </form>
+
+      </div>
+
+    </div>
+  </section>
+
+  <div id="footer"></div>
+
+  <script src="js/config.js"></script>
+
+  <script type="module" src="js/user/user_contact.js"></script>
+</body>
+</html>

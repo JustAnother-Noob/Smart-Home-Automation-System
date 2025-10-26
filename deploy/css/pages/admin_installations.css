@@ -1,0 +1,444 @@
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 12px;
+}
+
+.pagination .pagination-btn {
+    padding: 0.5rem 0.75rem;
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-left: 16px;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 4px);
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  min-width: 200px;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.status-filter {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 4px);
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  min-width: 120px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.status-filter:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+}
+
+.customer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.customer-name {
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 0.95rem;
+}
+
+.customer-email {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.contact-number {
+  font-family: 'Courier New', monospace;
+  font-weight: 500;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.product-name {
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.date-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.date-main {
+  font-weight: 500;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.date-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.technician-name {
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.action-btn {
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 4px);
+  background: var(--bg-input);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn:hover {
+  background: var(--bg-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+}
+
+.action-btn.view-btn:hover {
+  background: rgba(52, 152, 219, 0.1);
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.action-btn.edit-btn:hover {
+  background: rgba(255, 193, 7, 0.1);
+  color: #b45309;
+  border-color: #b45309;
+}
+
+.action-btn.delete-btn:hover {
+  background: rgba(231, 76, 60, 0.1);
+  color: var(--error-color);
+  border-color: var(--error-color);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid transparent;
+}
+
+.status-badge.status-pending {
+  background: rgba(255, 193, 7, 0.1);
+  color: #b45309;
+  border-color: rgba(255, 193, 7, 0.3);
+}
+
+.status-badge.status-confirmed {
+  background: rgba(52, 152, 219, 0.1);
+  color: var(--primary-color);
+  border-color: rgba(52, 152, 219, 0.3);
+}
+
+.status-badge.status-completed {
+  background: rgba(46, 204, 113, 0.1);
+  color: var(--success-color);
+  border-color: rgba(46, 204, 113, 0.3);
+}
+
+.status-badge.status-cancelled {
+  background: rgba(231, 76, 60, 0.1);
+  color: var(--error-color);
+  border-color: rgba(231, 76, 60, 0.3);
+}
+
+.installation-row {
+  transition: all 0.2s ease;
+}
+
+.installation-row:hover {
+  background: var(--bg-hover);
+}
+
+.installation-row.status-pending {
+  border-left: 3px solid rgba(255, 193, 7, 0.4);
+}
+
+.installation-row.status-confirmed {
+  border-left: 3px solid rgba(52, 152, 219, 0.4);
+}
+
+.installation-row.status-completed {
+  border-left: 3px solid rgba(46, 204, 113, 0.4);
+  background: rgba(46, 204, 113, 0.02);
+}
+
+.installation-row.status-cancelled {
+  border-left: 3px solid rgba(231, 76, 60, 0.4);
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    gap: 8px;
+    margin-left: 0;
+    margin-top: 12px;
+  }
+  
+  .search-input,
+  .status-filter {
+    width: 100%;
+    min-width: unset;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .action-btn {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg-input: #2d3748;
+  --bg-hover: #4a5568;
+  --text-main: #e2e8f0;
+  --text-muted: #a0aec0;
+  --border: #4a5568;
+  --primary-color: #63b3ed;
+  --primary-accent: #60afff;
+  --success-color: #68d391;
+  --error-color: #fc8181;
+}
+
+:root[data-theme="dark"] .search-input,
+:root[data-theme="dark"] .status-filter {
+  background: var(--bg-input);
+  border-color: var(--border);
+  color: var(--text-main);
+}
+
+:root[data-theme="dark"] .search-input:focus,
+:root[data-theme="dark"] .status-filter:focus {
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 0 2px rgba(96, 175, 255, 0.2);
+}
+
+:root[data-theme="dark"] .search-input::placeholder {
+  color: var(--text-muted);
+}
+
+:root[data-theme="dark"] .action-btn {
+  background: var(--bg-input);
+  border-color: var(--border);
+  color: var(--text-main);
+}
+
+:root[data-theme="dark"] .action-btn:hover {
+  background: var(--bg-hover);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme="dark"] .action-btn.view-btn:hover {
+  background: rgba(96, 175, 255, 0.2);
+  color: var(--primary-accent);
+  border-color: var(--primary-accent);
+}
+
+:root[data-theme="dark"] .action-btn.edit-btn:hover {
+  background: rgba(255, 193, 7, 0.2);
+  color: #fbbf24;
+  border-color: #fbbf24;
+}
+
+:root[data-theme="dark"] .action-btn.delete-btn:hover {
+  background: rgba(255, 93, 93, 0.2);
+  color: var(--error-color);
+  border-color: var(--error-color);
+}
+
+:root[data-theme="dark"] .status-badge.status-pending {
+  background: rgba(255, 193, 7, 0.2);
+  color: #fbbf24;
+  border-color: rgba(255, 193, 7, 0.4);
+}
+
+:root[data-theme="dark"] .status-badge.status-confirmed {
+  background: rgba(96, 175, 255, 0.2);
+  color: var(--primary-accent);
+  border-color: rgba(96, 175, 255, 0.4);
+}
+
+:root[data-theme="dark"] .status-badge.status-completed {
+  background: rgba(104, 211, 145, 0.2);
+  color: var(--success-color);
+  border-color: rgba(104, 211, 145, 0.4);
+}
+
+:root[data-theme="dark"] .status-badge.status-cancelled {
+  background: rgba(252, 129, 129, 0.2);
+  color: var(--error-color);
+  border-color: rgba(252, 129, 129, 0.4);
+}
+
+:root[data-theme="dark"] .installation-row:hover {
+  background: var(--bg-hover);
+}
+
+:root[data-theme="dark"] .installation-row.status-completed {
+  background: rgba(104, 211, 145, 0.05);
+}
+
+:root[data-theme="dark"] .form-group input,
+:root[data-theme="dark"] .form-group select,
+:root[data-theme="dark"] .form-group textarea {
+  background: var(--bg-input);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+
+:root[data-theme="dark"] .form-group input:focus,
+:root[data-theme="dark"] .form-group select:focus,
+:root[data-theme="dark"] .form-group textarea:focus {
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 0 3px rgba(96, 175, 255, 0.1);
+}
+
+:root[data-theme="dark"] .btn {
+  background: var(--bg-input);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+
+:root[data-theme="dark"] .btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--primary-accent);
+  color: var(--primary-accent);
+}
+
+:root[data-theme="dark"] .btn-primary {
+  background: var(--primary-accent);
+  color: var(--text-inverse);
+  border-color: var(--primary-accent);
+}
+
+:root[data-theme="dark"] .btn-primary:hover {
+  background: var(--secondary-accent);
+  border-color: var(--secondary-accent);
+}
+
+:root[data-theme="dark"] .card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+}
+
+:root[data-theme="dark"] .card-header {
+  background: var(--bg-highlight);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-main);
+}
+
+:root[data-theme="dark"] .card-body {
+  background: var(--bg-card);
+  color: var(--text-main);
+}
+
+:root[data-theme="dark"] .status-message {
+  background: var(--bg-highlight);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+
+:root[data-theme="dark"] .status-message.success {
+  background: rgba(34, 209, 138, 0.15);
+  color: var(--success);
+  border: 1px solid rgba(34, 209, 138, 0.3);
+}
+
+:root[data-theme="dark"] .status-message.error {
+  background: rgba(255, 93, 93, 0.15);
+  color: var(--error);
+  border: 1px solid rgba(255, 93, 93, 0.3);
+}
+
+:root[data-theme="dark"] .status-message.info {
+  background: rgba(96, 175, 255, 0.15);
+  color: var(--info);
+  border: 1px solid rgba(96, 175, 255, 0.3);
+}
+
+:root[data-theme="dark"] .loading-spinner {
+  color: var(--text-muted);
+}
+
+:root[data-theme="dark"] .loading-spinner::before {
+  border: 2px solid var(--border);
+  border-top: 2px solid var(--primary-accent);
+}
+
+:root[data-theme="dark"] .empty-state {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+
+:root[data-theme="dark"] .empty-state i {
+  color: var(--text-muted);
+}
+
+:root[data-theme="dark"] .empty-state h3 {
+  color: var(--text-main);
+}
+
+:root[data-theme="dark"] .empty-state p {
+  color: var(--text-muted);
+}

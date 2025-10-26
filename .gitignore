@@ -1,0 +1,4 @@
+node_modules/
+backend/.env
+backend/src/config/.env
+docs/.obsidian/

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Smart Living Tech</title>
+  <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+
+  <style>
+    /* Prevent layout shift during loading */
+    * { box-sizing: border-box; }
+    body { 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Inter', sans-serif; 
+      background-color: #ffffff;
+      overflow-x: hidden;
+    }
+    html { scroll-behavior: smooth; }
+    #navbar { 
+      min-height: 85px; 
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: white;
+    }
+    main { 
+      opacity: 0; 
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    main.loaded { 
+      opacity: 1; 
+      visibility: visible;
+    }
+    /* Prevent container blinking/flashing */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      box-sizing: border-box;
+    }
+    .checkout-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      box-sizing: border-box;
+    }
+    /* Hide banners initially to prevent blinking - show them last */
+    .shipping-banner, .promo-banner, .info-banner, .info-banner-small {
+      box-sizing: border-box;
+      width: 100%;
+      position: relative;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .info-banner-icon, .info-banner-content, .info-banner-actions {
+      box-sizing: border-box;
+      position: relative;
+    }
+    /* Show banners after everything else is loaded */
+    .banners-loaded .shipping-banner,
+    .banners-loaded .promo-banner,
+    .banners-loaded .info-banner,
+    .banners-loaded .info-banner-small {
+      opacity: 1;
+      visibility: visible;
+    }
+    /* Prevent breadcrumb blinking */
+    #breadcrumb-root, .breadcrumb, .breadcrumb-nav {
+      box-sizing: border-box;
+      width: 100%;
+      position: relative;
+      min-height: 24px;
+      margin: 0;
+      padding: 8px 0;
+    }
+    /* Prevent content flash */
+    .checkout-container, .checkout-form, .order-summary {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    main.loaded .checkout-container,
+    main.loaded .checkout-form,
+    main.loaded .order-summary {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/layout/user_navbar.css">
+  <link rel="stylesheet" href="css/pages/user_checkout.css">
+  <link rel="stylesheet" href="css/layout/user_footer.css">
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBd5bm-uF_iAlRw9JXRCZYYzOrdXihxNmI&libraries=places&callback=initAutocomplete" async defer></script>
+
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <script src="js/loadNav.js"></script>
+</head>
+<body>
+
+  <div id="navbar"></div>
+
+  <main class="checkout-container">
+    
+    <div id="breadcrumb-root" data-breadcrumb-parent="Cart" data-breadcrumb-parent-href="user_cart.html" data-breadcrumb-current="Checkout"></div>
+    <script src="js/components/breadcrumb-loader.js" defer></script>
+
+    <div class="checkout-header">
+      <h1>Secure Checkout</h1>
+      <div class="security-badges">
+        <div class="security-badge">
+          <i class="fas fa-lock"></i>
+          <span>SSL Encrypted</span>
+        </div>
+        <div class="security-badge">
+          <i class="fas fa-shield-alt"></i>
+          <span>Secure Payment</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkout-progress">
+      <div class="progress-step active" data-step="customer">
+        <div class="step-number">1</div>
+        <span class="step-label">Customer Info</span>
+      </div>
+      <div class="progress-step" data-step="shipping">
+        <div class="step-number">2</div>
+        <span class="step-label">Shipping</span>
+      </div>
+      <div class="progress-step" data-step="payment">
+        <div class="step-number">3</div>
+        <span class="step-label">Payment</span>
+      </div>
+    </div>
+
+    <div class="checkout-grid">
+      
+      <div class="checkout-form">
+
+        <div class="checkout-section" id="customer-section">
+          <div class="section-header">
+            <h2><i class="fas fa-user"></i> Customer Information</h2>
+            <div id="customer-auth-status" class="auth-status"></div>
+          </div>
+
+          <div class="section-content">
+            
+            <div id="customer-global-message" class="form-message" style="display: none;"></div>
+
+            <form id="customer-info-form" class="customer-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="firstName">First Name <span class="required">*</span></label>
+                  <input type="text" id="firstName" name="firstName" required>
+                  <div class="error-message" id="firstName-error"></div>
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Last Name <span class="required">*</span></label>
+                  <input type="text" id="lastName" name="lastName" required>
+                  <div class="error-message" id="lastName-error"></div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="email">Email Address <span class="required">*</span></label>
+                  <input type="email" id="email" name="email" required>
+                  <div class="error-message" id="email-error"></div>
+                </div>
+                <div class="form-group">
+                  <label for="phone">Phone Number <span class="required">*</span></label>
+                  <input type="tel" id="phone" name="phone" required>
+                  <div class="error-message" id="phone-error"></div>
+                </div>
+              </div>
+            </form>
+
+            <div class="address-section">
+              <h3><i class="fas fa-map-marker-alt"></i> Shipping Address</h3>
+
+              <div id="saved-addresses" class="saved-addresses" style="display: none;">
+                <div class="saved-addresses-header">
+                  <label>Choose from saved addresses:</label>
+                </div>
+                <div id="saved-addresses-list" class="saved-addresses-list">
+                  
+                </div>
+                <button type="button" id="add-new-address-btn" class="btn secondary-btn">
+                  <i class="fas fa-plus"></i> Add New Address
+                </button>
+              </div>
+
+              <div id="no-saved-addresses" class="no-saved-addresses-message" style="display: none;">
+                <div class="info-banner-small">
+                  <i class="fas fa-info-circle"></i>
+                  <span>You have no saved addresses. Please enter your shipping address below.</span>
+                </div>
+              </div>
+
+              <div id="address-form-container" class="address-form-container">
+                <form id="shipping-address-form" class="address-form">
+                  <div class="form-group">
+                    <label for="street">Street Address <span class="required">*</span></label>
+                    <input type="text" id="street" name="street" placeholder="123 Main Street" required>
+                    <div class="error-message" id="street-error"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="apartment">Apartment, Suite, etc. (Optional)</label>
+                    <input type="text" id="apartment" name="apartment" placeholder="Apartment, suite, unit, building, floor, etc.">
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="city">City <span class="required">*</span></label>
+                      <input type="text" id="city" name="city" required>
+                      <div class="error-message" id="city-error"></div>
+                    </div>
+                    <div class="form-group">
+                      <label for="state">State <span class="required">*</span></label>
+                      <select id="state" name="state" required>
+                        <option value="">Select State</option>
+                        <option value="NSW">New South Wales</option>
+                        <option value="VIC">Victoria</option>
+                        <option value="QLD">Queensland</option>
+                        <option value="WA">Western Australia</option>
+                        <option value="SA">South Australia</option>
+                        <option value="TAS">Tasmania</option>
+                        <option value="ACT">Australian Capital Territory</option>
+                        <option value="NT">Northern Territory</option>
+                      </select>
+                      <div class="error-message" id="state-error"></div>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="zipCode">Postcode <span class="required">*</span></label>
+                      <input type="text" id="zipCode" name="zipCode" pattern="[0-9]{4}" required>
+                      <div class="error-message" id="zipCode-error"></div>
+                    </div>
+                    <div class="form-group">
+                      <label for="country">Country <span class="required">*</span></label>
+                      <select id="country" name="country" required>
+                        <option value="Australia">Australia</option>
+                      </select>
+                      <div class="error-message" id="country-error"></div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div id="save-address-option" class="save-address-option" style="display: none;">
+                <div class="checkbox-group">
+                  <input type="checkbox" id="save-address">
+                  <label for="save-address">Save this address for future orders</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-actions">
+              <button type="button" id="continue-to-shipping" class="btn primary-btn" disabled>
+                Continue to Shipping <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="shipping-section" class="checkout-section" style="display: none;">
+          <div class="section-header">
+            <h2><i class="fas fa-truck"></i> Shipping Method</h2>
+          </div>
+          <div class="section-content">
+            
+          </div>
+        </div>
+
+        <div id="payment-section" class="checkout-section" style="display: none;">
+          <div class="section-header">
+            <h2><i class="fas fa-credit-card"></i> Payment</h2>
+          </div>
+          <div class="section-content">
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="order-summary">
+        <div class="summary-card">
+          <h3><i class="fas fa-shopping-cart"></i> Order Summary</h3>
+
+          <div id="summary-loading" class="summary-loading">
+            <div class="spinner"></div>
+            <p>Loading cart...</p>
+          </div>
+
+          <div id="cart-items-summary" class="cart-items-summary" style="display: none;">
+            
+          </div>
+
+          <div id="empty-cart" class="empty-cart" style="display: none;">
+
+            <p>Your cart is empty</p>
+            <p>Add items to your cart to proceed with checkout</p>
+            <a href="user_products.html" class="btn primary-btn">
+              <i class="fas fa-shopping-bag"></i> Start Shopping
+            </a>
+          </div>
+
+          <div id="order-totals" class="order-totals" style="display: none;">
+            <div class="total-row subtotal-row">
+              <span>Subtotal:</span>
+              <span id="subtotal-amount">$0.00</span>
+            </div>
+            <div class="total-row shipping-row">
+              <span>Shipping:</span>
+              <span id="shipping-amount">Calculated at next step</span>
+            </div>
+            <div class="total-row discount-row" id="discount-row" style="display: none;">
+              <span>Discount:</span>
+              <span id="discount-amount" class="discount-amount">-$0.00</span>
+            </div>
+            <div class="total-row tax-row">
+              <span>Tax (GST):</span>
+              <span id="tax-amount">Included</span>
+            </div>
+            <div class="total-row grand-total-row">
+              <span class="grand-total-label">Total:</span>
+              <span id="grand-total-amount" class="grand-total-amount">$0.00</span>
+            </div>
+          </div>
+
+          <div class="security-info">
+            <div class="security-item">
+              <i class="fas fa-shield-alt"></i>
+              <span>Secure SSL encryption</span>
+            </div>
+            <div class="security-item">
+              <i class="fas fa-undo-alt"></i>
+              <span>30-day return policy</span>
+            </div>
+            <div class="security-item">
+              <i class="fas fa-headset"></i>
+              <span>24/7 customer support</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer"></div>
+
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <p>Processing...</p>
+  </div>
+
+  <script>
+    // Environment configuration
+    const CONFIG = {
+      API_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://127.0.0.1:5002/api' 
+        : '/api',
+      GOOGLE_PLACES_API_KEY: 'AIzaSyBd5bm-uF_iAlRw9JXRCZYYzOrdXihxNmI',
+      STRIPE_PUBLIC_KEY: 'pk_test_51S7tllFJQNwSoxeFQH0CQUybCTNMMKx5Bfr0PXKMGHvbayfe4VzBOMqVXlIjGae4ngo1uhLBO5gzUlFrqQduYluY00a9OfSq91'
+    };
+
+    // Make CONFIG globally available
+    window.CONFIG = CONFIG;
+
+    // Google Places Autocomplete initialization
+    let autocompleteStreet, autocompleteCity;
+
+    window.initAutocomplete = function() {
+      console.log('🗺️ Initializing Google Places Autocomplete for Australia');
+      
+      // Initialize autocomplete for street address
+      const streetInput = document.getElementById('street');
+      const cityInput = document.getElementById('city');
+      
+      if (streetInput && window.google?.maps?.places) {
+        autocompleteStreet = new google.maps.places.Autocomplete(streetInput, {
+          types: ['address'],
+          componentRestrictions: { country: 'au' },
+          fields: ['address_components', 'formatted_address', 'geometry']
+        });
+
+        autocompleteStreet.addListener('place_changed', function() {
+          const place = autocompleteStreet.getPlace();
+          if (!place.address_components) {
+            console.warn('No address components found for selected place');
+            return;
+          }
+          
+          console.log('📍 Street address selected:', place);
+          
+          // Add visual feedback
+          streetInput.classList.add('auto-filled');
+          setTimeout(() => streetInput.classList.remove('auto-filled'), 1000);
+          
+          // Handle the place selection
+          if (window.checkoutManager?.handlePlaceSelection) {
+            window.checkoutManager.handlePlaceSelection(place, 'street');
+          }
+        });
+
+        // Handle focus and blur events for better UX
+        streetInput.addEventListener('focus', function() {
+          // Clear the field when user focuses to type manually
+          if (this.value && this.getAttribute('data-autocomplete-filled')) {
+            this.removeAttribute('data-autocomplete-filled');
+          }
+        });
+      }
+
+      // Initialize autocomplete for city (suburb)
+      if (cityInput && window.google?.maps?.places) {
+        autocompleteCity = new google.maps.places.Autocomplete(cityInput, {
+          types: ['(cities)'],
+          componentRestrictions: { country: 'au' },
+          fields: ['address_components', 'formatted_address']
+        });
+
+        autocompleteCity.addListener('place_changed', function() {
+          const place = autocompleteCity.getPlace();
+          if (!place.address_components) {
+            console.warn('No address components found for selected city');
+            return;
+          }
+          
+          console.log('🏙️ City selected:', place);
+          
+          // Add visual feedback
+          cityInput.classList.add('auto-filled');
+          setTimeout(() => cityInput.classList.remove('auto-filled'), 1000);
+          
+          // Handle the place selection
+          if (window.checkoutManager?.handlePlaceSelection) {
+            window.checkoutManager.handlePlaceSelection(place, 'city');
+          }
+        });
+
+        // Handle focus and blur events for better UX
+        cityInput.addEventListener('focus', function() {
+          if (this.value && this.getAttribute('data-autocomplete-filled')) {
+            this.removeAttribute('data-autocomplete-filled');
+          }
+        });
+      }
+    };
+
+    // DEBUG: Log authentication status for troubleshooting
+    console.log('🔍 Checkout page auth debug:', {
+      hasToken: !!localStorage.getItem('authToken'),
+      tokenPreview: localStorage.getItem('authToken') ? localStorage.getItem('authToken').substring(0, 20) + '...' : 'none',
+      firstName: localStorage.getItem('userFirstName'),
+      lastName: localStorage.getItem('userLastName'),
+      email: localStorage.getItem('userEmail'),
+      phone: localStorage.getItem('userPhone')
+    });
+
+    // Dynamically load navbar and footer
+    Promise.all([
+      fetch("./user_nav.html").then(response => response.text()),
+      fetch("./user_footer.html").then(response => response.text())
+    ]).then(([navData, footerData]) => {
+      document.getElementById("navbar").innerHTML = navData;
+      document.getElementById("footer").innerHTML = footerData;
+    }).catch(error => console.error("Error loading components:", error));
+  </script>
+  
+  <script src="js/user/user_checkout.js" defer></script>
+
+  <script>
+    // Prevent FOUC by ensuring content loads smoothly
+    document.addEventListener('DOMContentLoaded', function() {
+      // Wait for navbar and breadcrumbs to be loaded first
+      const checkComponents = setInterval(() => {
+        const navbar = document.getElementById('navbar');
+        const breadcrumb = document.getElementById('breadcrumb-root');
+        
+        // Check if navbar is loaded (required)
+        const navbarLoaded = navbar && navbar.children.length > 0;
+        
+        // Check if breadcrumb is loaded (optional - some pages don't have breadcrumbs)
+        const breadcrumbLoaded = !breadcrumb || breadcrumb.children.length > 0;
+        
+        if (navbarLoaded && breadcrumbLoaded) {
+          clearInterval(checkComponents);
+          
+          // Then show main content
+          setTimeout(() => {
+            const main = document.querySelector('main');
+            if (main) {
+              main.classList.add('loaded');
+              // Remove the loading overlay if it exists
+              const overlay = document.getElementById('nav-loading-overlay');
+              if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 300);
+              }
+              
+              // Show banners LAST after everything else is loaded
+              setTimeout(() => {
+                document.body.classList.add('banners-loaded');
+              }, 300);
+            }
+          }, 200);
+        }
+      }, 50);
+      
+      // Fallback: show content after max 2 seconds
+      setTimeout(() => {
+        const main = document.querySelector('main');
+        if (main && !main.classList.contains('loaded')) {
+          main.classList.add('loaded');
+        }
+        // Show banners in fallback too
+        if (!document.body.classList.contains('banners-loaded')) {
+          document.body.classList.add('banners-loaded');
+        }
+      }, 2000);
+    });
+  </script>
+</body>
+</html>

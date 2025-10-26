@@ -1,0 +1,249 @@
+
+
+.status-modal-content {
+  width: min(480px, 100%) !important;
+}
+
+.status-modal-header .modal-title-container {
+  gap: 12px;
+}
+
+.status-modal-header .modal-title-container i {
+  font-size: 1.5rem;
+  color: var(--primary-color, #3b82f6);
+}
+
+.status-modal-body {
+  padding: 24px 32px 28px;
+}
+
+.status-user-name-display {
+  padding: 12px 16px;
+  background: var(--info-bg, #f0f9ff);
+  border: 1px solid var(--info-border, #bfdbfe);
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-size: 0.9375rem;
+  color: var(--text-color, #1f2937);
+}
+
+.status-user-name-display strong {
+  color: var(--primary-color, #2563eb);
+}
+
+.status-options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.status-option-card {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  border: 2px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  background: var(--card-background, #ffffff);
+  transition: all 0.2s ease;
+}
+
+.status-option-card:hover {
+  border-color: var(--primary-color, #3b82f6);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.status-option-card .status-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.status-option-card:has(.status-radio:checked) {
+  border-color: var(--primary-color, #3b82f6);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.status-option-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+}
+
+.status-option-content > i {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+.status-option-card:nth-child(1) .status-option-content > i {
+  color: #10b981;
+}
+
+.status-option-card:nth-child(2) .status-option-content > i {
+  color: #ef4444;
+}
+
+.status-option-text {
+  flex: 1;
+}
+
+.status-option-text h4 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color, #1f2937);
+}
+
+.status-option-text p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-muted, #64748b);
+}
+
+.status-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color, #d1d5db);
+  background: var(--card-background, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.status-check i {
+  font-size: 0.75rem;
+  color: transparent;
+  transition: color 0.2s ease;
+}
+
+.status-option-card:has(.status-radio:checked) .status-check {
+  border-color: var(--primary-color, #3b82f6);
+  background: var(--primary-color, #3b82f6);
+}
+
+.status-option-card:has(.status-radio:checked) .status-check i {
+  color: #ffffff;
+}
+
+.status-option-card:has(.status-radio:focus-visible) {
+  outline: 2px solid var(--primary-color, #3b82f6);
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] .status-modal-header .modal-title-container i {
+  color: var(--primary-accent, #60afff);
+}
+
+[data-theme="dark"] .status-user-name-display {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(96, 175, 255, 0.3);
+  color: var(--text-main, #e2e8f0);
+}
+
+[data-theme="dark"] .status-user-name-display strong {
+  color: var(--primary-accent, #60afff);
+}
+
+[data-theme="dark"] .status-option-card {
+  background: var(--bg-highlight, #2a2e38);
+  border-color: var(--border-color, #3a4050);
+}
+
+[data-theme="dark"] .status-option-card:hover {
+  border-color: var(--primary-accent, #60afff);
+  box-shadow: 0 4px 12px rgba(96, 175, 255, 0.2);
+}
+
+[data-theme="dark"] .status-option-card:has(.status-radio:checked) {
+  border-color: var(--primary-accent, #60afff);
+  background: rgba(96, 175, 255, 0.08);
+}
+
+[data-theme="dark"] .status-option-text h4 {
+  color: var(--text-main, #e2e8f0);
+}
+
+[data-theme="dark"] .status-option-text p {
+  color: var(--text-muted, #a3adc2);
+}
+
+[data-theme="dark"] .status-check {
+  border-color: var(--border-color, #4a5568);
+  background: var(--bg-card, #23272f);
+}
+
+[data-theme="dark"] .status-option-card:has(.status-radio:checked) .status-check {
+  border-color: var(--primary-accent, #60afff);
+  background: var(--primary-accent, #60afff);
+}
+
+[data-theme="dark"] .status-option-card:nth-child(1) .status-option-content > i {
+  color: #22d18a;
+}
+
+[data-theme="dark"] .status-option-card:nth-child(2) .status-option-content > i {
+  color: #ff5d5d;
+}
+
+@media (max-width: 768px) {
+  .status-modal-content {
+    width: min(100%, calc(100vw - 32px)) !important;
+  }
+
+  .status-modal-body {
+    padding: 20px 24px 24px;
+  }
+
+  .status-option-content {
+    padding: 14px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-modal-body {
+    padding: 18px 20px 22px;
+  }
+
+  .status-user-name-display {
+    padding: 10px 14px;
+    font-size: 0.875rem;
+  }
+
+  .status-option-content {
+    gap: 12px;
+    padding: 12px 14px;
+  }
+
+  .status-option-content > i {
+    font-size: 1.5rem;
+  }
+
+  .status-option-text h4 {
+    font-size: 0.9375rem;
+  }
+
+  .status-option-text p {
+    font-size: 0.8125rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-option-card,
+  .status-check,
+  .status-check i {
+    transition: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .status-option-card {
+    border-width: 3px;
+  }
+
+  .status-check {
+    border-width: 3px;
+  }
+}

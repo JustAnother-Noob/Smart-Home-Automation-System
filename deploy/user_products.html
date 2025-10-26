@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Living Tech - Products</title>
+  <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+
+  <style>
+    /* Prevent layout shift during loading */
+    * { box-sizing: border-box; }
+    body { 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Inter', sans-serif; 
+      background-color: #ffffff;
+      overflow-x: hidden;
+    }
+    html { scroll-behavior: smooth; }
+    #navbar { 
+      min-height: 85px; 
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: white;
+    }
+    main { 
+      opacity: 0; 
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    main.loaded { 
+      opacity: 1; 
+      visibility: visible;
+    }
+    /* Prevent container blinking/flashing */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      box-sizing: border-box;
+    }
+    .products-container, .filters-section, .products-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      box-sizing: border-box;
+    }
+    /* Hide banners initially to prevent blinking - show them last */
+    .shipping-banner, .promo-banner, .info-banner, .info-banner-small {
+      box-sizing: border-box;
+      width: 100%;
+      position: relative;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .info-banner-icon, .info-banner-content, .info-banner-actions {
+      box-sizing: border-box;
+      position: relative;
+    }
+    /* Show banners after everything else is loaded */
+    .banners-loaded .shipping-banner,
+    .banners-loaded .promo-banner,
+    .banners-loaded .info-banner,
+    .banners-loaded .info-banner-small {
+      opacity: 1;
+      visibility: visible;
+    }
+    /* Prevent breadcrumb blinking */
+    #breadcrumb-root, .breadcrumb, .breadcrumb-nav {
+      box-sizing: border-box;
+      width: 100%;
+      position: relative;
+      min-height: 24px;
+      margin: 0;
+      padding: 8px 0;
+    }
+    /* Prevent content flash */
+    .products-container, .filters-section, .products-grid {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    main.loaded .products-container,
+    main.loaded .filters-section,
+    main.loaded .products-grid {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/layout/user_navbar.css">
+  <link rel="stylesheet" href="css/pages/user_products.css">
+  <link rel="stylesheet" href="css/components/user-product-card.css">
+  <link rel="stylesheet" href="css/layout/user_footer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+
+  <script src="js/config.js"></script>
+
+  <script src="js/loadNav.js"></script>
+
+</head>
+<body>
+
+  <div id="navbar"></div>
+
+  <div class="container" style="margin-top:16px;">
+    <div id="breadcrumb-root" data-breadcrumb-current="Products" style="font-size:0.95rem; margin-bottom:12px;"></div>
+    <script src="js/components/breadcrumb-loader.js" defer></script>
+    
+    <div id="notification-root"></div>
+    <script src="js/components/notification-loader.js" defer></script>
+
+    <div class="promo-banner" style="text-align:center; margin-bottom:18px;">
+      <img src="assets/images/signup_voucher.png" alt="Special offer" style="max-width:100%; height:auto; border-radius:8px; box-shadow:var(--shadow);">
+    </div>
+  </div>
+
+  <div id="mobile-filter-overlay" class="mobile-filter-overlay"></div>
+  
+  <div class="container">
+    <main class="products-main">
+      
+      <aside id="filters-sidebar" class="filters-sidebar" aria-label="Product filters">
+        <div class="filters-inner">
+          <div class="filters-header">
+            <h3>Filter Products</h3>
+            <button id="mobile-filter-close" class="mobile-filter-close" aria-label="Close filters">
+              <i class="fi fi-rr-cross"></i>
+            </button>
+          </div>
+
+          <div class="filters-content">
+
+<section class="filter-section" aria-labelledby="filter-categories">
+  <h4 id="filter-categories">Categories</h4>
+  
+  <div class="filter-categories-vertical" id="filter-categories-list" role="group" aria-label="Product categories">
+    <label class="filter-category-label"><input type="checkbox" class="filter-category-checkbox" data-category="" checked> All</label>
+    <label class="filter-category-label"><input type="checkbox" class="filter-category-checkbox" data-category="lighting"> Smart Lighting</label>
+    <label class="filter-category-label"><input type="checkbox" class="filter-category-checkbox" data-category="security"> Security</label>
+    <label class="filter-category-label"><input type="checkbox" class="filter-category-checkbox" data-category="climate control"> Climate Control</label>
+    <label class="filter-category-label"><input type="checkbox" class="filter-category-checkbox" data-category="hubs & bridges"> Hubs & Bridges</label>
+    <label class="filter-category-label"><input type="checkbox" class="filter-category-checkbox" data-category="automation kits"> Automation Kits</label>
+  </div>
+</section>
+
+<section class="filter-section" aria-labelledby="filter-price">
+  <h4 id="filter-price">Price Range</h4>
+  
+  <div class="price-sliders" aria-hidden="false" style="margin-top:8px;">
+    <input id="price-range-min" type="range" min="0" max="10000" step="1" value="0">
+    <input id="price-range-max" type="range" min="0" max="10000" step="1" value="10000">
+    
+  </div>
+
+  <div class="price-box">
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <label for="price-min">From</label>
+      <input id="price-min" type="number" min="0" max="10000" step="1" placeholder="0">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <label for="price-max">To</label>
+      <input id="price-max" type="number" min="0" max="10000" step="1" placeholder="10000">
+    </div>
+  </div>
+</section>
+
+          <section class="filter-section" aria-labelledby="filter-rating">
+            <h4 id="filter-rating">Minimum Rating</h4>
+            <div class="rating-options" id="rating-options">
+              <label><input type="radio" name="minRating" value="0" checked> <span class="sr-only">Any rating</span><span aria-hidden="true">Any</span></label>
+              <label><input type="radio" name="minRating" value="4"> <span class="stars" aria-hidden="true"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span><span class="sr-only">4 stars and up</span></label>
+              <label><input type="radio" name="minRating" value="3"> <span class="stars" aria-hidden="true"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span><span class="sr-only">3 stars and up</span></label>
+              <label><input type="radio" name="minRating" value="2"> <span class="stars" aria-hidden="true"><i class="fas fa-star"></i><i class="fas fa-star"></i></span><span class="sr-only">2 stars and up</span></label>
+              <label><input type="radio" name="minRating" value="1"> <span class="stars" aria-hidden="true"><i class="fas fa-star"></i></span><span class="sr-only">1 star and up</span></label>
+            </div>
+          </section>
+
+          <section class="filter-section" aria-labelledby="filter-availability">
+            <h4 id="filter-availability">Availability</h4>
+            <label class="availability-label"><input id="availability-instock" type="checkbox"> In stock only</label>
+          </section>
+
+          <section class="filter-section" aria-labelledby="filter-sale">
+            <h4 id="filter-sale">Special</h4>
+            <label class="availability-label"><input id="filter-sale-checkbox" type="checkbox"> On sale</label>
+          </section>
+
+          </div>
+          
+        </div>
+      </aside>
+
+      <div id="products-column" class="products-column">
+        <div class="products-toolbar">
+          
+          <button id="mobile-filter-toggle" class="mobile-filter-toggle" aria-label="Toggle filters" aria-expanded="false">
+            <i class="fi fi-rr-filter"></i>
+            <span>Filters</span>
+          </button>
+          
+          <div class="toolbar-left"><div class="product-count" id="product-count">0 Products</div></div>
+          <div class="toolbar-right">
+              <div class="sort-container">
+                <label for="sort-options">Sort By:</label>
+                <select id="sort-options" class="sort-select">
+                  <option value="bestseller">Bestseller</option>
+                  <option value="new-arrivals">New Arrivals</option>
+                  <option value="price-asc">Price (Low to High)</option>
+                  <option value="price-desc">Price (High to Low)</option>
+                  <option value="rating-desc">Highest Rated</option>
+                </select>
+              </div>
+          </div>
+        </div>
+
+        <div id="applied-filters" class="applied-filters" style="display:none;" aria-live="polite">
+          <div class="applied-filters-chips" role="list" aria-label="Applied filters"></div>
+        </div>
+
+        <div id="products-grid" class="products-grid"></div>
+        <div id="loading-spinner" class="loading-spinner"><div class="spinner"></div><p>Loading products...</p></div>
+        <div id="empty-state" class="empty-state" style="display:none;">
+          <div class="empty-state-icon"><i class="fas fa-search"></i></div>
+          <h3>No products found</h3>
+          <p></p>
+        </div>
+        <div id="pagination" class="pagination"></div>
+      </div>
+    </main>
+  </div>
+  <button id="back-to-top" class="back-to-top"><i class="fas fa-arrow-up"></i></button>
+  <div id="footer"></div>
+  
+  <link rel="stylesheet" href="css/modal.css">
+  <script src="js/utils/modal-utils.js" defer></script>
+  <script src="js/cart.js" defer></script>
+  <script type="module" src="js/user/user_products.js" defer></script>
+
+  <script>
+    // Prevent FOUC by ensuring content loads smoothly
+    document.addEventListener('DOMContentLoaded', function() {
+      // Wait for navbar and breadcrumbs to be loaded first
+      const checkComponents = setInterval(() => {
+        const navbar = document.getElementById('navbar');
+        const breadcrumb = document.getElementById('breadcrumb-root');
+        
+        // Check if navbar is loaded (required)
+        const navbarLoaded = navbar && navbar.children.length > 0;
+        
+        // Check if breadcrumb is loaded (optional - some pages don't have breadcrumbs)
+        const breadcrumbLoaded = !breadcrumb || breadcrumb.children.length > 0;
+        
+        if (navbarLoaded && breadcrumbLoaded) {
+          clearInterval(checkComponents);
+          
+          // Then show main content
+          setTimeout(() => {
+            const main = document.querySelector('main');
+            if (main) {
+              main.classList.add('loaded');
+              // Remove the loading overlay if it exists
+              const overlay = document.getElementById('nav-loading-overlay');
+              if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 300);
+              }
+              
+              // Show banners LAST after everything else is loaded
+              setTimeout(() => {
+                document.body.classList.add('banners-loaded');
+              }, 300);
+            }
+          }, 200);
+        }
+      }, 50);
+      
+      // Fallback: show content after max 2 seconds
+      setTimeout(() => {
+        const main = document.querySelector('main');
+        if (main && !main.classList.contains('loaded')) {
+          main.classList.add('loaded');
+        }
+        // Show banners in fallback too
+        if (!document.body.classList.contains('banners-loaded')) {
+          document.body.classList.add('banners-loaded');
+        }
+      }, 2000);
+    });
+  </script>
+  </body>
+  </html>

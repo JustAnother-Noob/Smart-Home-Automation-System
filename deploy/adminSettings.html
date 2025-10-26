@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Living Tech – Admin Settings</title>
+    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="css/admin-top-nav.css" />
+    <link rel="stylesheet" href="css/modal.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('adminDarkMode');
+          const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          
+          if (savedTheme === 'dark' || (savedTheme === null && systemPrefersDark)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) {
+          // Silently fail if localStorage is not available
+        }
+      })();
+    </script>
+</head>
+
+<body>
+    
+    <div class="admin-loading-overlay" id="globalLoadingOverlay">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <div class="container">
+        
+        <nav class="admin-top-nav" id="adminTopNav" role="navigation" aria-label="Admin navigation">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <img src="https://res.cloudinary.com/dkx5o5nqk/image/upload/v1759927622/logo_without_background_n42aqy.png" alt="Smart Home Logo" class="nav-logo-img">
+                    <span class="nav-brand">Smart Living Tech Admin</span>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="adminHome.html"><i class="fas fa-tachometer-alt" aria-hidden="true"></i> <span class="nav-text">Dashboard</span></a></li>
+                    <li class="nav-item"><a href="adminUsers.html"><i class="fas fa-users" aria-hidden="true"></i> <span class="nav-text">Users</span></a></li>
+                    <li class="nav-item"><a href="adminProducts.html"><i class="fas fa-box" aria-hidden="true"></i> <span class="nav-text">Products</span></a></li>
+                    <li class="nav-item"><a href="adminOrders.html"><i class="fas fa-shopping-cart" aria-hidden="true"></i> <span class="nav-text">Orders</span></a></li>
+                    <li class="nav-item"><a href="adminInstallations.html"><i class="fas fa-tools" aria-hidden="true"></i> <span class="nav-text">Installations</span></a></li>
+                    <li class="nav-item"><a href="adminCoupons.html"><i class="fas fa-ticket-alt" aria-hidden="true"></i> <span class="nav-text">Coupons</span></a></li>
+                    <li class="nav-item"><a href="adminNetworkLogs.html"><i class="fas fa-network-wired" aria-hidden="true"></i> <span class="nav-text">Network Logs</span></a></li>
+                    <li class="nav-item active"><a href="adminSettings.html" aria-current="page"><i class="fas fa-cog" aria-hidden="true"></i> <span class="nav-text">Settings</span></a></li>
+                </ul>
+
+                <div class="nav-user-info">
+                    <span class="nav-welcome-text">Welcome,</span>
+                    <span class="nav-admin-name" id="adminNameDisplay">Admin</span>
+                    <button id="headerLogoutBtn" class="nav-logout-btn" title="Logout">
+                        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+                
+                <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                    <i class="fas fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-content" role="main">
+
+            <div class="content">
+                
+                <section id="appearance-settings" class="page-section" aria-labelledby="appearance-settings-heading">
+                    <div class="card">
+                        <header class="card-header">
+                            <div class="action-bar">
+                                <div class="section-header">
+                                    <h2 id="appearance-settings-heading" class="no-margin">Appearance Settings</h2>
+                                    <p class="section-description">Customize the appearance of your admin interface.</p>
+                                </div>
+                            </div>
+                        </header>
+                        <div class="card-body">
+                            <div class="form-section">
+                                <h3 class="form-section-title">
+                                    <i class="fas fa-palette"></i>
+                                    Theme Settings
+                                </h3>
+                                <div class="form-group">
+                                    <div class="toggle-switch">
+                                        <label for="darkModeToggle" class="toggle-label">
+                                            <input type="checkbox" id="darkModeToggle" name="darkModeToggle" class="toggle-input">
+                                            <span class="toggle-slider"></span>
+                                            <span class="toggle-text">Dark Mode</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="settings-page" class="page-section" aria-labelledby="security-settings-heading">
+                    <div class="card">
+                        <header class="card-header">
+                            <div class="action-bar">
+                                <div class="section-header">
+                                    <h2 id="security-settings-heading" class="no-margin">Admin Security</h2>
+                                    <p class="section-description">Manage your administrator password and security settings.</p>
+                                </div>
+                                <div class="button-group">
+                                    <button id="refreshSettings" class="btn btn-primary" title="Refresh settings" aria-label="Refresh settings">
+                                        <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                                        <span>Refresh</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </header>
+                        <div class="card-body">
+                            <div class="security-overview-grid" role="list" aria-label="Security status highlights">
+                                <article class="security-card security-card--primary" data-metric="strength">
+                                    <div class="security-card__icon" aria-hidden="true">
+                                        <i class="fas fa-shield-halved"></i>
+                                    </div>
+                                    <div class="security-card__body">
+                                        <div class="security-card__label">Password Strength</div>
+                                        <div class="security-strength-meter" aria-hidden="true">
+                                            <div class="security-strength-meter__track">
+                                                <div class="security-strength-meter__bar" id="passwordStrengthOverviewBar"></div>
+                                            </div>
+                                        </div>
+                                        <div class="security-card__metric" id="passwordStrengthBadge">Not evaluated</div>
+                                        <div class="security-card__meta" id="passwordStrengthScore" aria-live="polite">0 / 5 criteria met</div>
+                                    </div>
+                                </article>
+                                <article class="security-card security-card--neutral" data-metric="updated">
+                                    <div class="security-card__icon" aria-hidden="true">
+                                        <i class="fas fa-clock-rotate-left"></i>
+                                    </div>
+                                    <div class="security-card__body">
+                                        <div class="security-card__label">Last Password Update</div>
+                                        <div class="security-card__metric" id="passwordLastChanged">Not yet recorded</div>
+                                        <div class="security-card__meta" id="passwordLastChangedMeta">Update your password regularly to keep your account safe.</div>
+                                    </div>
+                                </article>
+                                <article class="security-card security-card--accent" data-metric="recommendation">
+                                    <div class="security-card__icon" aria-hidden="true">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <div class="security-card__body">
+                                        <div class="security-card__label">Next Recommended Action</div>
+                                        <div class="security-card__metric" id="securityNextStep">Review active sessions</div>
+                                        <div class="security-card__meta">Use the controls below to update your admin credentials securely.</div>
+                                    </div>
+                                </article>
+                            </div>
+
+                            <div class="security-layout">
+                                <form id="securityForm" class="security-form" role="form" aria-label="Admin password update form" aria-describedby="adminPasswordRules">
+                                    <div id="securityFeedback" class="status-message" role="status" aria-live="polite" style="display: none;"></div>
+
+                                    <div class="form-section">
+                                        <h3 class="form-section-title">
+                                            <i class="fas fa-lock"></i>
+                                            Update Admin Password
+                                        </h3>
+                                        <p class="section-description">Create a strong unique password to keep the admin console secure. All fields are required.</p>
+
+                                        <div class="form-group has-inline-action">
+                                            <label for="currentPassword" class="required">Current Password</label>
+                                            <div class="secure-input">
+                                                <input type="password" id="currentPassword" name="currentPassword" required autocomplete="current-password" aria-describedby="currentPasswordHelp" />
+                                                <button type="button" class="btn-icon" data-toggle-password="currentPassword" aria-label="Show current password">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                            <span class="form-help" id="currentPasswordHelp">Enter your current password to verify your identity before making changes.</span>
+                                        </div>
+
+                                        <div class="form-row two-columns">
+                                            <div class="form-group has-inline-action">
+                                                <label for="newPassword" class="required">New Password</label>
+                                                <div class="secure-input">
+                                                    <input type="password" id="newPassword" name="newPassword" required autocomplete="new-password" aria-describedby="adminPasswordRules" />
+                                                    <button type="button" class="btn-icon" data-toggle-password="newPassword" aria-label="Show new password">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <span class="form-help" id="newPasswordHelp">Enter a strong new password.</span>
+                                            </div>
+                                            <div class="form-group has-inline-action">
+                                                <label for="confirmPassword" class="required">Confirm New Password</label>
+                                                <div class="secure-input">
+                                                    <input type="password" id="confirmPassword" name="confirmPassword" required autocomplete="new-password" aria-describedby="confirmPasswordHelp" />
+                                                    <button type="button" class="btn-icon" data-toggle-password="confirmPassword" aria-label="Show confirmation password">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <span class="form-help" id="confirmPasswordHelp">Re-enter your new password to confirm.</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="password-tools">
+                                            <button type="button" class="btn btn-secondary" id="generatePasswordBtn">
+                                                <i class="fas fa-magic"></i>
+                                                Generate Strong Password
+                                            </button>
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" id="syncConfirmation" checked />
+                                                <span>Copy generated password to confirmation field</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="security-requirements" id="adminPasswordRules">
+                                        <div class="requirements-header">
+                                            <div class="requirements-title">
+                                                <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                                                Password Requirements
+                                            </div>
+                                            <div class="requirements-score" id="passwordStrengthLabel">
+                                                <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                                                <span>Awaiting input</span>
+                                            </div>
+                                        </div>
+                                        <div class="security-strength-meter security-strength-meter--inline" aria-hidden="true">
+                                            <div class="security-strength-meter__track">
+                                                <div class="security-strength-meter__bar" id="passwordStrengthBar"></div>
+                                            </div>
+                                        </div>
+                                        <ul class="requirements-list">
+                                            <li id="adm-length" data-rule="length" class="requirement-item">
+                                                <i class="fas fa-circle-notch" aria-hidden="true"></i>
+                                                <span>At least 8 characters</span>
+                                            </li>
+                                            <li id="adm-uppercase" data-rule="uppercase" class="requirement-item">
+                                                <i class="fas fa-circle-notch" aria-hidden="true"></i>
+                                                <span>One uppercase letter (A-Z)</span>
+                                            </li>
+                                            <li id="adm-lowercase" data-rule="lowercase" class="requirement-item">
+                                                <i class="fas fa-circle-notch" aria-hidden="true"></i>
+                                                <span>One lowercase letter (a-z)</span>
+                                            </li>
+                                            <li id="adm-number" data-rule="number" class="requirement-item">
+                                                <i class="fas fa-circle-notch" aria-hidden="true"></i>
+                                                <span>One number (0-9)</span>
+                                            </li>
+                                            <li id="adm-special" data-rule="special" class="requirement-item">
+                                                <i class="fas fa-circle-notch" aria-hidden="true"></i>
+                                                <span>One special character (!@#$%^&*)</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i>
+                                            <span class="button-text">Update Password</span>
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <aside class="security-sidebar" aria-label="Security recommendations">
+                                    <div class="helper-card">
+                                        <h4><i class="fas fa-lightbulb"></i> Security Best Practices</h4>
+                                        <ul>
+                                            <li>Rotate your administrator password every 60-90 days.</li>
+                                            <li>Use unique passwords for your admin account and avoid reuse.</li>
+                                            <li>Enable multi-factor authentication wherever possible.</li>
+                                            <li>Review admin activity in the Network Logs for unusual behavior.</li>
+                                            <li>Log out from admin sessions when not in use to prevent unauthorized access.</li>
+                                            <li>Monitor failed login attempts and implement account lockout policies.</li>
+                                            <li>Keep your browser and system updated with the latest security patches.</li>
+                                            <li>Never share admin credentials with unauthorized personnel.</li>
+                                        </ul>
+                                    </div>
+                                    <div class="helper-card helper-card--neutral">
+                                        <h4><i class="fas fa-info-circle"></i> Admin Resources</h4>
+                                        <p>Access system documentation and admin tools for troubleshooting.</p>
+                                        <a href="adminNetworkLogs.html" class="btn btn-secondary">
+                                            <i class="fas fa-network-wired"></i>
+                                            View System Logs
+                                        </a>
+                                    </div>
+                                </aside>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/init.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/logout.js"></script>
+    <script src="js/admin-top-nav.js"></script>
+    <script src="js/admin_js/darkMode.js"></script>
+    <script src="js/admin_js/refresh-utils.js"></script>
+    <script src="js/admin_js/adminSettings.js"></script>
+    <script src="js/admin_js/admin-utils.js"></script>
+    <script src="js/auth-utils.js"></script>
+    <script src="js/admin_js/admin-header.js"></script>
+</body>
+</html>

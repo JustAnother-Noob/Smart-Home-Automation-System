@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Installation - Smart Living Tech</title>
+    <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+
+    <style>
+      /* Prevent layout shift during loading */
+      * { box-sizing: border-box; }
+      body { 
+        margin: 0; 
+        padding: 0; 
+        font-family: 'Inter', sans-serif; 
+        background-color: #ffffff;
+        overflow-x: hidden;
+      }
+      html { scroll-behavior: smooth; }
+      #navbar { 
+        min-height: 85px; 
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: white;
+      }
+      main { 
+        opacity: 0; 
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      main.loaded { 
+        opacity: 1; 
+        visibility: visible;
+      }
+      /* Prevent container blinking/flashing */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        box-sizing: border-box;
+      }
+      /* Hide banners initially to prevent blinking - show them last */
+      .shipping-banner, .promo-banner, .info-banner, .info-banner-small {
+        box-sizing: border-box;
+        width: 100%;
+        position: relative;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      .info-banner-icon, .info-banner-content, .info-banner-actions {
+        box-sizing: border-box;
+        position: relative;
+      }
+      /* Show banners after everything else is loaded */
+      .banners-loaded .shipping-banner,
+      .banners-loaded .promo-banner,
+      .banners-loaded .info-banner,
+      .banners-loaded .info-banner-small {
+        opacity: 1;
+        visibility: visible;
+      }
+      /* Prevent breadcrumb blinking */
+      #breadcrumb-root, .breadcrumb, .breadcrumb-nav {
+        box-sizing: border-box;
+        width: 100%;
+        position: relative;
+        min-height: 24px;
+        margin: 0;
+        padding: 8px 0;
+      }
+      /* Prevent content flash */
+      .installation-container, .guest-prompt, .order-selection {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+      }
+      main.loaded .installation-container,
+      main.loaded .guest-prompt,
+      main.loaded .order-selection {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/layout/user_navbar.css">
+    <link rel="stylesheet" href="css/pages/user_installation.css">
+    <link rel="stylesheet" href="css/layout/user_footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBd5bm-uF_iAlRw9JXRCZYYzOrdXihxNmI&libraries=places&callback=initAutocomplete" async defer></script>
+
+  <script src="js/loadNav.js"></script>
+</head>
+<body>
+
+    <div id="navbar"></div>
+
+    <main class="installation-container">
+        
+        <div id="breadcrumb-root" data-breadcrumb-current="Book Installation"></div>
+        <script src="js/components/breadcrumb-loader.js" defer></script>
+
+        <div class="guest-prompt" id="guest-prompt" role="region" aria-label="Sign in notice">
+            <div class="info-banner">
+                <div class="info-banner-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="info-banner-content">
+                    <h3>Want to see your order history?</h3>
+                    <p>Sign in to access your orders and book installations faster with pre-filled information.</p>
+                </div>
+                <div class="info-banner-actions">
+                    <a href="user_login.html" class="btn secondary-btn"><i class="fas fa-sign-in-alt"></i> Log in</a>
+                    <a href="user_signup.html" class="btn primary-btn"><i class="fas fa-user-plus"></i> Sign up</a>
+                </div>
+            </div>
+        </div>
+
+        <section class="order-selection-section">
+            
+            <div class="order-selection-card">
+                <div class="manual-entry-content">
+                    <div class="manual-entry-form">
+                        <div class="form-header">
+                            <h3>Order Selection</h3>
+                            <p>Enter the Order ID from your confirmation email to book installation.</p>
+                        </div>
+                        <div class="input-group">
+                            <label for="order-id-input">Order ID</label>
+                            <div class="input-with-btn">
+                                <input 
+                                    type="text" 
+                                    id="order-id-input" 
+                                    placeholder="Enter Order ID (e.g., ORD-12345)" 
+                                    maxlength="50" 
+                                    aria-label="Order ID"
+                                >
+                                <button type="button" id="search-order-btn" class="btn primary-btn">
+                                    <i class="fas fa-search"></i> Find Order
+                                </button>
+                            </div>
+                            <div class="input-help">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Find your Order ID in the confirmation email we sent you</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="no-results" class="no-results" style="display: none;">
+                        <div class="no-results-content">
+                            <h3 id="no-results-title">Order Not Found</h3>
+                            <p id="no-results-message">We couldn't find an order with that ID. Please check your Order ID and try again.</p>
+
+                            <div class="support-card support-inline">
+                                <div class="support-content">
+                                    <h4>Need Help?</h4>
+                                    <p>If you have questions about your order or need assistance, we're here to help.</p>
+                                    <div class="support-options">
+                                        <a href="mailto:smartlivingtech0@gmail.com" class="support-link btn secondary-btn">
+                                            <i class="fas fa-envelope"></i>
+                                            <span>smartlivingtech0@gmail.com</span>
+                                        </a>
+                                        <span class="support-divider">or</span>
+                                        <a href="user_contact.html" class="support-link btn primary-btn">
+                                            <i class="fas fa-comment-alt"></i>
+                                            <span>Visit Contact Page</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="already-booked" class="no-results" style="display: none;">
+                        <div class="no-results-content">
+                            <h3>Installation Already Booked</h3>
+                            <p>This order already has an installation scheduled. You cannot book another installation for the same order.</p>
+
+                            <div class="support-card support-inline">
+                                <div class="support-content">
+                                    <h4>Need to Make Changes?</h4>
+                                    <p>If you need to modify or cancel your installation booking, please contact us.</p>
+                                    <div class="support-options">
+                                        <a href="mailto:smartlivingtech0@gmail.com" class="support-link btn secondary-btn">
+                                            <i class="fas fa-envelope"></i>
+                                            <span>smartlivingtech0@gmail.com</span>
+                                        </a>
+                                        <span class="support-divider">or</span>
+                                        <a href="user_contact.html" class="support-link btn primary-btn">
+                                            <i class="fas fa-comment-alt"></i>
+                                            <span>Visit Contact Page</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-orders-section" id="my-orders-section" style="display: none;">
+            <h3 class="my-orders-title">Select from your past orders</h3>
+
+            <div id="orders-loading" class="loading-state" style="display: none;">
+                <div class="spinner"></div>
+                <p>Loading your orders...</p>
+            </div>
+
+            <div id="orders-list-container" class="orders-list-container" style="display: none;">
+                
+            </div>
+
+            <div id="orders-empty" class="no-results" style="display: none;">
+                <div class="no-results-content">
+                    <h3>No Available Orders</h3>
+                    <p>You don't have any orders that can have installation booked.</p>
+
+                    <div class="support-card support-inline">
+                        <div class="support-content">
+                            <h4>Need Help?</h4>
+                            <p>Browse our products or contact us for assistance with installation services.</p>
+                            <div class="support-options">
+                                <a href="user_products.html" class="support-link btn primary-btn">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span>Shop Products</span>
+                                </a>
+                                <span class="support-divider">or</span>
+                                <a href="user_contact.html" class="support-link btn secondary-btn">
+                                    <i class="fas fa-comment-alt"></i>
+                                    <span>Contact Us</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="orders-error" class="error-state" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Failed to Load Orders</h3>
+                <p id="orders-error-message">Unable to load your orders. Please try again.</p>
+                <button type="button" id="retry-orders-btn" class="btn secondary-btn">
+                    <i class="fas fa-redo"></i> Retry
+                </button>
+            </div>
+        </section>
+
+        <section class="selected-order-section" id="selected-order-section" style="display: none;">
+            <div class="selected-order-header">
+                <h2><i class="fas fa-check-circle"></i> Selected Order</h2>
+                <button type="button" class="btn outline-btn" id="change-order-btn">
+                    <i class="fas fa-exchange-alt"></i> Change Order
+                </button>
+            </div>
+            <div class="selected-order-card" id="selected-order-card">
+                
+            </div>
+
+            <form id="booking-form" class="booking-form">
+                <div class="booking-details-card">
+                    <div class="section-header">
+                        <h3><i class="fas fa-calendar-alt"></i> Booking Details</h3>
+                    </div>
+
+                    <div class="form-error" id="datetime-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="datetime-error-message"></span>
+                    </div>
+                    <div class="form-error" id="customer-details-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="customer-details-error-message"></span>
+                    </div>
+
+                    <div class="booking-form-grid">
+                        
+                        <div class="form-group">
+                            <label for="installation-date">
+                                Installation Date <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="date" 
+                                id="installation-date" 
+                                name="installationDate" 
+                                required
+                                min=""
+                            >
+                            <span class="help-text">
+                                <i class="fas fa-info-circle"></i>
+                                At least 2 days from today
+                            </span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="installation-time">
+                                Preferred Time <span class="required">*</span>
+                            </label>
+                            <select id="installation-time" name="installationTime" required>
+                                <option value="">Select time slot</option>
+                                <option value="09:00-12:00">Morning (9:00 AM - 12:00 PM)</option>
+                                <option value="12:00-15:00">Afternoon (12:00 PM - 3:00 PM)</option>
+                                <option value="15:00-18:00">Evening (3:00 PM - 6:00 PM)</option>
+                            </select>
+                            <span class="help-text">
+                                <i class="fas fa-info-circle"></i>
+                                Select your time slot
+                            </span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customer-name">
+                                Name <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="customer-name" 
+                                name="customerName" 
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customer-email">
+                                Email <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="email" 
+                                id="customer-email" 
+                                name="customerEmail" 
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customer-phone">
+                                Phone Number <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="tel" 
+                                id="customer-phone" 
+                                name="contactNumber" 
+                                pattern="[0-9]{10}"
+                                maxlength="10"
+                                title="Please enter a 10-digit phone number"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="installation-address">
+                                Installation Address <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="installation-address" 
+                                name="address" 
+                                autocomplete="off"
+                                required
+                            >
+                        </div>
+                        
+                        <div class="form-error" id="customer-details-error" style="display: none;">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span id="customer-details-error-message"></span>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="installation-notes">
+                                Additional Notes <span class="optional">(Optional)</span>
+                            </label>
+                            <textarea 
+                                id="installation-notes" 
+                                name="notes" 
+                                rows="3"
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <div class="payment-note">
+                        <i class="fas fa-info-circle"></i>
+                        <p><strong>Note:</strong> Payment will be calculated after our technician visits your site and assesses the installation requirements.</p>
+                    </div>
+                </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn primary-btn" id="submit-booking-btn">
+                            <i class="fas fa-check"></i> Book Installation
+                        </button>
+                    </div>
+                </form>
+        </section>
+
+        <div class="loading-overlay" id="loading-overlay" style="display: none;">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+
+    </main>
+
+    <div id="footer"></div>
+    <script>
+        fetch("./user_footer.html").then(r=>r.text()).then(html=>{
+            document.getElementById("footer").innerHTML = html;
+        });
+    </script>
+
+    <script src="js/cart.js"></script>
+    <script src="js/user/user_installation.js" defer></script>
+
+    <script>
+      // Prevent FOUC by ensuring content loads smoothly
+      document.addEventListener('DOMContentLoaded', function() {
+        // Wait for navbar and breadcrumbs to be loaded first
+        const checkComponents = setInterval(() => {
+          const navbar = document.getElementById('navbar');
+          const breadcrumb = document.getElementById('breadcrumb-root');
+          
+          // Check if navbar is loaded (required)
+          const navbarLoaded = navbar && navbar.children.length > 0;
+          
+          // Check if breadcrumb is loaded (optional - some pages don't have breadcrumbs)
+          const breadcrumbLoaded = !breadcrumb || breadcrumb.children.length > 0;
+          
+          if (navbarLoaded && breadcrumbLoaded) {
+            clearInterval(checkComponents);
+            
+            // Then show main content
+            setTimeout(() => {
+              const main = document.querySelector('main');
+              if (main) {
+                main.classList.add('loaded');
+                // Remove the loading overlay if it exists
+                const overlay = document.getElementById('nav-loading-overlay');
+                if (overlay) {
+                  overlay.style.opacity = '0';
+                  setTimeout(() => overlay.remove(), 300);
+                }
+                
+                // Show banners LAST after everything else is loaded
+                setTimeout(() => {
+                  document.body.classList.add('banners-loaded');
+                }, 300);
+              }
+            }, 200);
+          }
+        }, 50);
+        
+        // Fallback: show content after max 2 seconds
+        setTimeout(() => {
+          const main = document.querySelector('main');
+          if (main && !main.classList.contains('loaded')) {
+            main.classList.add('loaded');
+          }
+          // Show banners in fallback too
+          if (!document.body.classList.contains('banners-loaded')) {
+            document.body.classList.add('banners-loaded');
+          }
+        }, 2000);
+      });
+    </script>
+</body>
+</html>

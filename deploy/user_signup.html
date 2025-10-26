@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - Smart Living Tech</title>
+  <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+
+  <style>
+    /* Prevent layout shift during loading */
+    * { box-sizing: border-box; }
+    body { 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Inter', sans-serif; 
+      background-color: #ffffff;
+      overflow-x: hidden;
+    }
+    html { scroll-behavior: smooth; }
+    #navbar { 
+      min-height: 85px; 
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: white;
+    }
+    main { 
+      opacity: 0; 
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    main.loaded { 
+      opacity: 1; 
+      visibility: visible;
+    }
+    /* Prevent container blinking/flashing */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      box-sizing: border-box;
+    }
+    /* Prevent content flash */
+    .form-container, .signup-top-image {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    body.loaded .form-container,
+    body.loaded .signup-top-image {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/layout/user_navbar.css">
+  <link rel="stylesheet" href="css/pages/user_signup.css">
+  <link rel="stylesheet" href="css/layout/user_footer.css">
+
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script src="js/loadNav.js"></script>
+</head>
+<body>
+
+  <div id="navbar"></div>
+
+  <div class="signup-top-image" aria-hidden="true">
+    <img src="assets/images/signup_voucher.png" alt="Signup voucher" />
+  </div>
+
+  <div class="form-container">
+    <h1>Create Your Account</h1>
+    <form id="signupForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name:</label>
+          <input type="text" id="firstName" name="firstName" required minlength="2">
+          <div id="firstNameError" class="error-message"></div>
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name:</label>
+          <input type="text" id="lastName" name="lastName" required minlength="2">
+          <div id="lastNameError" class="error-message"></div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <div id="emailError" class="error-message"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <div class="password-container">
+          <input type="password" id="password" name="password" required 
+                 aria-describedby="passwordRules passwordError">
+          <i id="show-pwd" class="fi fi-rr-eye-crossed password-toggle" aria-label="Toggle password visibility"></i>
+        </div>
+        <div id="passwordError" class="error-message" aria-live="polite"></div>
+        <div class="password-rules" id="passwordRules">
+          <strong>Password requirements:</strong>
+          <ul>
+            <li id="length">At least 8 characters</li>
+            <li id="uppercase">Contains uppercase letter</li>
+            <li id="lowercase">Contains lowercase letter</li>
+            <li id="number">Contains number</li>
+            <li id="special">Contains special character</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password:</label>
+        <div class="password-container">
+          <input type="password" id="confirmPassword" name="confirmPassword" required>
+          <i id="show-confirm-pwd" class="fi fi-rr-eye-crossed password-toggle" aria-label="Toggle password visibility"></i>
+        </div>
+        <div id="confirmError" class="error-message"></div>
+      </div>
+      
+      <div class="terms">
+        <input type="checkbox" id="termsCheckbox" required>
+        <label for="termsCheckbox">I agree to the <a href="terms-of-service.html" target="_blank">Terms of Service</a> and the <a href="privacy-policy.html" target="_blank">Privacy Policy</a>.</label>
+      </div>
+      <div id="termsError" class="error-message"></div>
+      
+      <div class="g-recaptcha"
+        data-sitekey="6LdHU_0qAAAAAPeJGSJhhVigGOoMTRv5peDU9uG4"
+        data-callback="recaptchaSuccess"
+        data-expired-callback="recaptchaExpired"
+        data-error-callback="recaptchaError">
+      </div>
+      <div id="recaptchaError" class="error-message"></div>
+      
+      <div id="statusMessage" class="status-message" style="display: none;" role="status" aria-live="polite">
+        <span class="status-text"></span>
+      </div>
+      
+      <button type="submit" class="btn-primary">Create Account</button>
+      
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Creating your account...</p>
+      </div>
+    </form>
+    
+    <div class="divider">
+      <span>OR</span>
+    </div>
+    
+    <div class="google-signin-container">
+      <div id="googleSignInButton"></div>
+    </div>
+    
+    <div class="login-link">
+      Already have an account? <a href="user_login.html">Log in</a>
+    </div>
+  </div>
+
+  <div id="footer"></div>
+
+  <script>
+    // Environment configuration
+    const CONFIG = {
+      API_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://127.0.0.1:5002/api' 
+        : '/api',
+      GOOGLE_CLIENT_ID: "1028485501245-c9kh3ga5umg7jhn9bvticpaf10iputqg.apps.googleusercontent.com"
+    };
+
+    // FIXED: Make CONFIG globally available for user_signup.js
+    window.CONFIG = CONFIG;
+  </script>
+  <script type="module" src="js/user/user_signup.js"></script>
+
+  <script>
+    // Prevent FOUC by ensuring content loads smoothly
+    document.addEventListener('DOMContentLoaded', function() {
+      // Wait for navbar to be loaded first
+      const checkNavbar = setInterval(() => {
+        const navbar = document.getElementById('navbar');
+        if (navbar && navbar.children.length > 0) {
+          clearInterval(checkNavbar);
+          
+          // Then show main content
+          setTimeout(() => {
+            document.body.classList.add('loaded');
+            // Remove the loading overlay if it exists
+            const overlay = document.getElementById('nav-loading-overlay');
+            if (overlay) {
+              overlay.style.opacity = '0';
+              setTimeout(() => overlay.remove(), 300);
+            }
+          }, 200);
+        }
+      }, 50);
+      
+      // Fallback: show content after max 2 seconds
+      setTimeout(() => {
+        if (!document.body.classList.contains('loaded')) {
+          document.body.classList.add('loaded');
+        }
+      }, 2000);
+    });
+  </script>
+  </body>
+  </html>

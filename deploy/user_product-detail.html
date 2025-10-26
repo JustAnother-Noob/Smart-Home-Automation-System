@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details - Smart Living Tech</title>
+  <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+  <link rel="stylesheet" href="css/layout/user_navbar.css">
+  <link rel="stylesheet" href="css/pages/user_product-detail.css">
+  <link rel="stylesheet" href="css/components/similar-products.css">
+  <link rel="stylesheet" href="css/components/user-product-card.css">
+  <link rel="stylesheet" href="css/layout/user_footer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+
+  <script src="js/loadNav.js"></script>
+</head>
+<body>
+
+  <div id="navbar"></div>
+
+  <div class="container" style="margin-top:16px;">
+  
+  <div id="breadcrumb-root" data-breadcrumb-parent="Products" data-breadcrumb-parent-href="user_products.html" data-breadcrumb-current="Product Details"></div>
+    <script src="js/components/breadcrumb-loader.js" defer></script>
+    
+    <div id="notification-root"></div>
+    <script src="js/components/notification-loader.js" defer></script>
+
+    <div id="loading-container" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading product details...</p>
+    </div>
+
+    <div id="error-container" class="error-state" style="display: none;">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h2>Product Not Found</h2>
+      <p id="error-message">The product you're looking for doesn't exist or has been removed.</p>
+      <a href="user_products.html" class="btn btn-primary">Browse Products</a>
+    </div>
+
+    <div id="product-detail-container" class="product-detail-wrapper" style="display: none;">
+      <div class="product-detail-grid">
+
+        <div class="product-gallery">
+          <div class="main-image-container">
+            <img id="main-image" src="assets/images/placeholder.png" alt="Product Image" class="main-image">
+            <button class="image-nav-btn prev-btn" id="prev-image-btn" aria-label="Previous image">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="image-nav-btn next-btn" id="next-image-btn" aria-label="Next image">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <div class="thumbnail-gallery" id="thumbnail-gallery">
+            
+          </div>
+        </div>
+
+        <div class="product-info">
+          <h1 id="product-name" class="product-name">Product Name</h1>
+          
+          <div class="product-meta">
+            <div class="product-rating">
+              <div id="product-stars" class="stars"></div>
+              <span id="product-rating-text" class="rating-text"></span>
+            </div>
+            <div class="product-sku">
+              <span class="label">SKU:</span>
+              <span id="product-sku">N/A</span>
+            </div>
+          </div>
+
+          <div class="product-price-section">
+            <div class="price-container">
+              <span id="product-price" class="price">$0.00</span>
+              <span id="product-original-price" class="original-price" style="display: none;">$0.00</span>
+            </div>
+            <div id="clearance-badge" class="clearance-badge" style="display: none;">
+              <i class="fas fa-tag"></i> Sale
+            </div>
+          </div>
+
+          <div class="product-stock">
+            <span id="stock-status" class="stock-status"></span>
+          </div>
+
+          <div class="product-attributes">
+            <div class="attribute">
+              <span class="label">Category:</span>
+              <span id="product-category" class="value">N/A</span>
+            </div>
+            <div class="attribute" id="brand-attribute" style="display: none;">
+              <span class="label">Brand:</span>
+              <span id="product-brand" class="value">N/A</span>
+            </div>
+          </div>
+
+          <div class="product-actions">
+            <div class="quantity-selector">
+              <label for="quantity">Quantity:</label>
+              <div class="quantity-controls">
+                <button class="qty-btn" id="decrease-qty" aria-label="Decrease quantity">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <input type="number" id="quantity" value="1" min="1" max="999" aria-label="Quantity">
+                <button class="qty-btn" id="increase-qty" aria-label="Increase quantity">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+            </div>
+
+            <button id="add-to-cart-btn" type="button" class="btn btn-primary btn-add-to-cart" aria-live="polite">
+              <span class="btn-content"><i class="fas fa-shopping-cart icon" aria-hidden="true"></i><span class="label">Add to Cart</span></span>
+            </button>
+          </div>
+
+          <div class="product-benefits" aria-hidden="true">
+            <div class="benefit-item">
+              <i class="fas fa-truck-fast"></i>
+              <span>Fast delivery</span>
+            </div>
+            <div class="benefit-item">
+              <i class="fas fa-undo"></i>
+              <span>30 days return</span>
+            </div>
+            <div class="benefit-item">
+              <i class="fas fa-shield"></i>
+              <span>Secure checkout</span>
+            </div>
+            <div class="benefit-item">
+              <i class="fas fa-tools"></i>
+              <span>Installation services</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs container" id="product-tabs">
+      <div role="tablist" aria-label="Product information tabs" class="tab-list">
+        <button role="tab" aria-selected="true" aria-controls="tab-details" id="tab-btn-details">Product Details</button>
+        <button role="tab" aria-selected="false" aria-controls="tab-shipping" id="tab-btn-shipping">Shipping</button>
+        <button role="tab" aria-selected="false" aria-controls="tab-refund" id="tab-btn-refund">Refund</button>
+      </div>
+
+      <section id="tab-details" class="tab-panel" role="tabpanel" aria-hidden="false" aria-labelledby="tab-btn-details">
+        <div id="tab-details-content" class="policy-section">Loading product details...</div>
+      </section>
+
+      <section id="tab-shipping" class="tab-panel" role="tabpanel" aria-hidden="true" aria-labelledby="tab-btn-shipping">
+        <div id="tab-shipping-content" class="policy-section">
+          <p>We aim to deliver your order as quickly and safely as possible. All orders are processed within 1–2 business days after confirmation.</p>
+
+          <strong>Delivery Options:</strong>
+          <ul>
+            <li><strong>Standard Shipping:</strong> 3–7 business days</li>
+            <li><strong>Express Shipping:</strong> 1–3 business days</li>
+            <li><strong>Overnight Shipping:</strong> available where supported</li>
+          </ul>
+
+          <strong>Tracking:</strong>
+          <p>Once your order ships, you’ll receive an email with a tracking link so you can follow your delivery in real time.</p>
+
+          <strong>Shipping Costs:</strong>
+          <p>Calculated at checkout based on location and delivery method.</p>
+
+          <p class="policy-note">Note: During peak seasons or public holidays, delivery times may vary slightly.</p>
+        </div>
+      </section>
+
+      <section id="tab-refund" class="tab-panel" role="tabpanel" aria-hidden="true" aria-labelledby="tab-btn-refund">
+        <div id="tab-refund-content" class="policy-section">
+          <p>Your satisfaction is our priority. If you’re not completely happy with your purchase, we’re here to help.</p>
+
+          <strong>Eligibility for Returns:</strong>
+          <ul>
+            <li>You may return items within 30 days of delivery.</li>
+            <li>Products must be unused, in their original packaging, and in resellable condition.</li>
+            <li>Proof of purchase (order number or receipt) is required.</li>
+          </ul>
+
+          <strong>Non-Returnable Items:</strong>
+          <ul>
+            <li>Installed or modified products</li>
+            <li>Clearance or “Final Sale” items</li>
+            <li>Custom-made products</li>
+          </ul>
+
+          <strong>Refund Process:</strong>
+          <p>Once we receive and inspect your returned item, we’ll notify you and process your refund within 5–7 business days to your original payment method.</p>
+
+          <strong>Damaged or Incorrect Items:</strong>
+          <p>If you receive a defective or incorrect product, please contact our support team within 7 days of delivery. We’ll arrange a replacement or refund at no extra cost.</p>
+
+          <p class="policy-note">For return requests, please email <a class="policy-contact" href="mailto:smartlivingtech0@gmail.com">smartlivingtech0@gmail.com</a> with your order number and photos of the item (if applicable).</p>
+        </div>
+      </section>
+    </div>
+
+    <section class="similar-products-section container" id="similar-products-section" style="display: none;">
+      <div class="similar-products-header">
+        <div>
+          <h2 class="similar-products-title">You May Also Like</h2>
+          <p class="similar-products-subtitle">Bestsellers in this category</p>
+        </div>
+        <a href="user_products.html" class="similar-products-view-all">
+          View All Products <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div id="similar-products-loading" class="similar-products-loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading similar products...</p>
+      </div>
+
+      <div id="similar-products-grid" class="similar-products-grid"></div>
+
+      <div id="similar-products-empty" class="similar-products-empty" style="display: none;">
+        <i class="fas fa-box-open"></i>
+        <p>No similar products found.</p>
+      </div>
+
+      <div id="similar-products-error" class="similar-products-error" style="display: none;">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Failed to load similar products.</p>
+      </div>
+    </section>
+  </div>
+
+  <div id="footer"></div>
+  <script>
+    // Load footer HTML (same approach used across the site)
+    fetch('./user_footer.html').then(r => r.text()).then(html => {
+      document.getElementById('footer').innerHTML = html;
+    }).catch(() => {
+      // fallback: try loading a fragment from user_nav if footer.html missing
+      fetch("./user_nav.html").then(r=>r.text()).then(html=>{
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        const footerEl = doc.querySelector("footer");
+        if(footerEl) document.getElementById("footer").appendChild(footerEl);
+      }).catch(()=>{});
+    });
+  </script>
+
+  <script src="js/cart.js"></script>
+  <script type="module" src="js/user/user_product-detail.js"></script>
+</body>
+</html>

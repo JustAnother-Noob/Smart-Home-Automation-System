@@ -1,0 +1,206 @@
+
+
+.coupon-modal .form-group input.error,
+.coupon-modal .form-group select.error,
+.coupon-modal .form-group textarea.error {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.coupon-modal .form-group input.error:focus,
+.coupon-modal .form-group select.error:focus,
+.coupon-modal .form-group textarea.error:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+}
+
+.coupon-modal .form-group input.error + .form-help,
+.coupon-modal .form-group select.error + .form-help,
+.coupon-modal .form-group textarea.error + .form-help {
+  color: #dc2626 !important;
+}
+
+.coupon-modal .form-group .error-message {
+  color: #dc2626;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.coupon-modal .form-group .error-message::before {
+  content: "⚠";
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.coupon-modal .form-group input.valid,
+.coupon-modal .form-group select.valid,
+.coupon-modal .form-group textarea.valid {
+  border-color: #10b981 !important;
+  background-color: #f0fdf4 !important;
+}
+
+.coupon-modal .form-group input.valid:focus,
+.coupon-modal .form-group select.valid:focus,
+.coupon-modal .form-group textarea.valid:focus {
+  border-color: #059669 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
+.coupon-modal .form-error-summary {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+
+.coupon-modal .form-error-summary h4 {
+  margin: 0 0 8px 0;
+  color: #dc2626;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.coupon-modal .form-error-summary h4::before {
+  content: "⚠";
+  font-size: 0.8rem;
+}
+
+.coupon-modal .form-error-summary ul {
+  margin: 0;
+  padding-left: 16px;
+  color: #dc2626;
+}
+
+.coupon-modal .form-error-summary li {
+  font-size: 0.8rem;
+  margin-bottom: 2px;
+  line-height: 1.4;
+}
+
+.coupon-modal .form-error-summary li:last-child {
+  margin-bottom: 0;
+}
+
+.form-group input.valid,
+.form-group select.valid,
+.form-group textarea.valid {
+  border-color: #10b981 !important;
+  background-color: #f0fdf4 !important;
+}
+
+.form-group input:invalid,
+.form-group select:invalid,
+.form-group textarea:invalid {
+  border-color: #ef4444;
+}
+
+.form-group input:valid,
+.form-group select:valid,
+.form-group textarea:valid {
+  border-color: #10b981;
+}
+
+.validation-info {
+  margin-bottom: 20px;
+}
+
+.info-box {
+  background: #f0f9ff;
+  border: 1px solid #0ea5e9;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.info-box i {
+  color: #0ea5e9;
+  font-size: 1.2rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.info-content {
+  flex: 1;
+}
+
+.info-content strong {
+  color: #0369a1;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.info-content ul {
+  margin: 0;
+  padding-left: 16px;
+  color: #0c4a6e;
+}
+
+.info-content li {
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.info-content li:last-child {
+  margin-bottom: 0;
+}
+
+[data-theme="dark"] .validation-info {
+  margin-bottom: 20px;
+}
+
+[data-theme="dark"] .info-box {
+  background: rgba(96, 175, 255, 0.1);
+  border: 1px solid rgba(96, 175, 255, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+[data-theme="dark"] .info-box i {
+  color: #60AFFF;
+  font-size: 1.2rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .info-content {
+  flex: 1;
+}
+
+[data-theme="dark"] .info-content strong {
+  color: #60AFFF;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+}
+
+[data-theme="dark"] .info-content ul {
+  margin: 0;
+  padding-left: 16px;
+  color: #B1B7C5;
+}
+
+[data-theme="dark"] .info-content li {
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .info-content li:last-child {
+  margin-bottom: 0;
+}

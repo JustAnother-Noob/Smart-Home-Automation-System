@@ -1,0 +1,489 @@
+
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 16px;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+    border: 2px solid #ffe0e0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.checkbox-group:hover {
+    background: linear-gradient(135deg, #fff0f0 0%, #ffe5e5 100%);
+    border-color: #ffb3b3;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.1);
+}
+
+.checkbox-group.active {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+    border-color: #e74c3c;
+    box-shadow: 0 4px 16px rgba(231, 76, 60, 0.15);
+}
+
+.checkbox-group .checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    appearance: none;
+    background: #ffffff;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.checkbox-group input[type="checkbox"]:hover {
+    border-color: #e74c3c;
+    background: #fff5f5;
+    transform: scale(1.05);
+}
+
+.checkbox-group input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border-color: #c0392b;
+    transform: scale(1.05);
+}
+
+.checkbox-group input[type="checkbox"]:checked::before {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.checkbox-group input[type="checkbox"]:focus {
+    outline: none;
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+}
+
+.checkbox-group label {
+    margin: 0;
+    font-weight: 600;
+    color: #e74c3c;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-group label::before {
+    content: '🏷️';
+    font-size: 18px;
+}
+
+.checkbox-group label:hover {
+    color: #c0392b;
+}
+
+.clearance-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+    z-index: 2;
+}
+
+.clearance-badge i {
+    margin-right: 2px;
+}
+
+.clearance-indicator {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+    transition: all 0.3s ease;
+}
+
+.clearance-indicator:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+}
+
+.clearance-indicator i {
+    font-size: 10px;
+}
+
+.price-original {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.85em;
+    display: inline-block;
+    margin-left: 8px;
+}
+
+.price-discounted {
+    color: #e74c3c;
+    font-weight: bold;
+    font-size: 1.1em;
+    display: inline-block;
+}
+
+.clearance-badge {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 8px;
+    display: inline-block;
+    box-shadow: 0 1px 3px rgba(231, 76, 60, 0.3);
+}
+
+.clearance-badge-small {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+    z-index: 2;
+}
+
+.product-price {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.product-price .price-discounted {
+    font-size: 1.1em;
+    color: #e74c3c;
+    font-weight: 700;
+    margin: 0;
+    order: 1;
+}
+
+.product-price .price-original {
+    font-size: 0.9em;
+    color: #888;
+    margin: 0;
+    order: 2;
+}
+
+.product-price .clearance-badge {
+    order: 3;
+    margin-left: 4px;
+}
+
+.card-price-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.card-price.discounted {
+    font-size: 1.15em;
+    color: #e74c3c;
+    font-weight: 700;
+    margin: 0;
+    order: 1;
+}
+
+.card-price.original {
+    font-size: 0.9em;
+    color: #888;
+    text-decoration: line-through;
+    margin: 0;
+    order: 2;
+    opacity: 0.8;
+}
+
+#product-price {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+#product-price .price-discounted {
+    font-size: 1.8em;
+    color: #e74c3c;
+    font-weight: 700;
+    margin: 0;
+    order: 1;
+}
+
+#product-price .price-original {
+    font-size: 1.3em;
+    color: #888;
+    text-decoration: line-through;
+    margin: 0;
+    order: 2;
+}
+
+#product-price .clearance-indicator {
+    font-size: 0.9em;
+    order: 3;
+    margin-left: 8px;
+}
+
+.related-products .product-price {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.related-products .price-discounted {
+    font-size: 1em;
+    color: #e74c3c;
+    font-weight: 700;
+    order: 1;
+}
+
+.related-products .price-original {
+    font-size: 0.85em;
+    color: #888;
+    order: 2;
+}
+
+#productDiscountedPrice:disabled {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+    border-color: #dee2e6;
+    opacity: 0.6;
+}
+
+#productDiscountedPrice:enabled {
+    background-color: #fff5f5;
+    border-color: #e74c3c;
+    transition: all 0.3s ease;
+}
+
+#productDiscountedPrice:enabled:focus {
+    border-color: #c0392b;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+    background-color: #ffffff;
+}
+
+#productDiscountedPrice:enabled:hover {
+    border-color: #e74c3c;
+    background-color: #fff8f8;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-group label i {
+    margin-right: 6px;
+    font-size: 14px;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.checkbox-group.loading input[type="checkbox"] {
+    border-color: #3498db;
+    background: linear-gradient(45deg, #3498db, #2980b9);
+}
+
+.checkbox-group.loading input[type="checkbox"]::before {
+    content: '⟳';
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+.form-group.success input {
+    border-color: #2ecc71 !important;
+    background-color: #f0fff4 !important;
+}
+
+.form-group.error input {
+    border-color: #e74c3c !important;
+    background-color: #fff0f0 !important;
+}
+
+:root[data-theme="dark"] .checkbox-group {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.15) 0%, rgba(192, 57, 43, 0.12) 100%);
+    border-color: rgba(231, 76, 60, 0.3);
+}
+
+:root[data-theme="dark"] .checkbox-group:hover {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.2) 0%, rgba(192, 57, 43, 0.15) 100%);
+    border-color: rgba(231, 76, 60, 0.4);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2);
+}
+
+:root[data-theme="dark"] .checkbox-group.active {
+    border-color: rgba(231, 76, 60, 0.5);
+    box-shadow: 0 4px 16px rgba(231, 76, 60, 0.25);
+}
+
+:root[data-theme="dark"] .checkbox-group input[type="checkbox"] {
+    background: var(--bg-card, #2d3748);
+    border-color: rgba(231, 76, 60, 0.4);
+}
+
+:root[data-theme="dark"] .checkbox-group input[type="checkbox"]:hover {
+    background: rgba(231, 76, 60, 0.15);
+}
+
+:root[data-theme="dark"] .checkbox-group label {
+    color: #ff7b7b;
+}
+
+:root[data-theme="dark"] .checkbox-group label:hover {
+    color: #ff9999;
+}
+
+:root[data-theme="dark"] .clearance-badge,
+:root[data-theme="dark"] .clearance-badge-small {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.4);
+}
+
+:root[data-theme="dark"] .card-badge.clearance {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.4);
+}
+
+:root[data-theme="dark"] .clearance-indicator {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+}
+
+:root[data-theme="dark"] .price-discounted {
+    color: #ff6b6b;
+}
+
+:root[data-theme="dark"] .price-original {
+    color: var(--text-muted, #888);
+}
+
+:root[data-theme="dark"] .card-price.discounted {
+    color: #ff6b6b;
+}
+
+:root[data-theme="dark"] .card-price.original {
+    color: var(--text-muted, #999);
+}
+
+:root[data-theme="dark"] #productDiscountedPrice:disabled {
+    background-color: var(--bg-highlight, #2d3748);
+    color: var(--text-muted, #6c757d);
+    border-color: var(--border, #4a5568);
+}
+
+:root[data-theme="dark"] #productDiscountedPrice:enabled {
+    background-color: rgba(231, 76, 60, 0.1);
+    border-color: rgba(231, 76, 60, 0.4);
+}
+
+:root[data-theme="dark"] #productDiscountedPrice:enabled:focus {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.3);
+    background-color: rgba(231, 76, 60, 0.15);
+}
+
+:root[data-theme="dark"] #productDiscountedPrice:enabled:hover {
+    border-color: rgba(231, 76, 60, 0.5);
+    background-color: rgba(231, 76, 60, 0.12);
+}
+
+:root[data-theme="dark"] .form-group label {
+    color: var(--text-main, #e0e0e0);
+}
+
+@media (max-width: 768px) {
+    .clearance-badge {
+        font-size: 9px;
+        padding: 3px 6px;
+    }
+    
+    .checkbox-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+        margin-bottom: 4px;
+    }
+}

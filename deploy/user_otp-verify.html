@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify OTP - Smart Living Tech</title>
+  <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/layout/user_navbar.css">
+  <link rel="stylesheet" href="css/pages/user_otp-verify.css">
+  <link rel="stylesheet" href="css/layout/user_footer.css">
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="js/loadNav.js"></script>
+</head>
+<body>
+
+  <div id="navbar"></div>
+
+  <div class="otp-container">    
+    <h1>Verify Your Email</h1>
+    
+    <div class="otp-message">
+      <p>We've sent a 6-digit verification code to</p>
+      <p><strong id="masked-email">a********n@example.com</strong></p>
+      <p class="otp-validity">OTP expires in <span id="validity-time">10 minutes</span></p>
+    </div>
+    
+    <form id="otp-form">
+      <div class="otp-inputs">
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-input" aria-label="First digit" autocomplete="off">
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-input" aria-label="Second digit" autocomplete="off">
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-input" aria-label="Third digit" autocomplete="off">
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-input" aria-label="Fourth digit" autocomplete="off">
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-input" aria-label="Fifth digit" autocomplete="off">
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-input" aria-label="Sixth digit" autocomplete="off">
+      </div>
+      
+      <div class="feedback" id="feedback-area">
+        
+      </div>
+      
+      <button type="submit" class="verify-btn">
+        <i class="fas fa-check-circle"></i>
+        Verify Code
+      </button>
+    </form>
+    
+    <div class="resend-container">
+      <p>Didn't receive the code? 
+        <a href="#" id="resend-link" class="disabled">
+          <i class="fas fa-redo"></i> Resend Code
+        </a>
+        <span id="resend-timer">(00:59)</span>
+      </p>
+    </div>
+    
+    <div class="otp-help">
+      <h3><i class="fas fa-lightbulb"></i> Tips</h3>
+      <ul>
+        <li>Check your spam/junk folder if you don't see the email</li>
+        <li>Make sure you entered the correct email address</li>
+        <li>The code expires after 10 minutes</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="footer"></div>
+
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <p>Verifying...</p>
+  </div>
+
+  <script>
+    // Dynamically load navbar and footer
+    Promise.all([
+      fetch("./user_nav.html").then(response => response.text()),
+      fetch("./user_footer.html").then(response => response.text())
+    ]).then(([navData, footerData]) => {
+      document.getElementById("navbar").innerHTML = navData;
+      document.getElementById("footer").innerHTML = footerData;
+      
+      // Load scripts in proper order: cart.js -> nav.js -> user_nav.js
+      const cartScript = document.createElement('script');
+      cartScript.src = '../js/cart.js';
+      cartScript.onload = () => {
+        const navScript = document.createElement('script');
+        navScript.src = '../js/nav.js';
+        navScript.onload = () => {
+          const userNavScript = document.createElement('script');
+          userNavScript.src = '../js/user/user_nav.js';
+          document.body.appendChild(userNavScript);
+        };
+        document.body.appendChild(navScript);
+      };
+      document.body.appendChild(cartScript);
+    }).catch(error => console.error("Error loading components:", error));
+  </script>
+  <script src="js/user/user_otp-verify.js" defer></script>
+</body>
+</html>

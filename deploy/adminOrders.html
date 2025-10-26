@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Smart Living Tech – Order Management</title>
+
+  <link rel="stylesheet" href="css/admin.css" />
+  <link rel="stylesheet" href="css/admin-top-nav.css" />
+  <link rel="stylesheet" href="css/modal.css" />
+  <link rel="stylesheet" href="css/products.css" />
+  <link rel="stylesheet" href="css/print.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <script>
+    (function() {
+      try {
+        const savedTheme = localStorage.getItem('adminDarkMode');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (savedTheme === null && systemPrefersDark)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {
+        // Silently fail if localStorage is not available
+      }
+    })();
+  </script>
+
+  <style>
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0,0,0,0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 8px;
+      background: #111827;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      z-index: 1000;
+      transition: top .2s;
+    }
+    .skip-link:focus { top: 8px; }
+    .no-margin { margin: 0; }
+  </style>
+</head>
+
+<body>
+  <a href="#orders-heading" class="skip-link">Skip to main content</a>
+
+  <noscript>
+    <div style="background:#fee2e2;color:#7f1d1d;padding:12px;text-align:center;">
+      JavaScript is required for the Admin Order Management page to function.
+    </div>
+  </noscript>
+
+  <div class="admin-loading-overlay" id="globalLoadingOverlay" aria-hidden="true">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Loading...</p>
+  </div>
+
+  <div class="container">
+    
+    <nav class="admin-top-nav" id="adminTopNav" role="navigation" aria-label="Admin navigation">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <img src="https://res.cloudinary.com/dkx5o5nqk/image/upload/v1759927622/logo_without_background_n42aqy.png" alt="Smart Home Logo" class="nav-logo-img">
+          <span class="nav-brand">Smart Living Tech Admin</span>
+        </div>
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="adminHome.html"><i class="fas fa-tachometer-alt" aria-hidden="true"></i> <span class="nav-text">Dashboard</span></a></li>
+          <li class="nav-item"><a href="adminUsers.html"><i class="fas fa-users" aria-hidden="true"></i> <span class="nav-text">Users</span></a></li>
+          <li class="nav-item"><a href="adminProducts.html"><i class="fas fa-box" aria-hidden="true"></i> <span class="nav-text">Products</span></a></li>
+          <li class="nav-item active"><a href="adminOrders.html" aria-current="page"><i class="fas fa-shopping-cart" aria-hidden="true"></i> <span class="nav-text">Orders</span></a></li>
+          <li class="nav-item"><a href="adminInstallations.html"><i class="fas fa-tools" aria-hidden="true"></i> <span class="nav-text">Installations</span></a></li>
+          <li class="nav-item"><a href="adminCoupons.html"><i class="fas fa-ticket-alt" aria-hidden="true"></i> <span class="nav-text">Coupons</span></a></li>
+          <li class="nav-item"><a href="adminNetworkLogs.html"><i class="fas fa-network-wired" aria-hidden="true"></i> <span class="nav-text">Network Logs</span></a></li>
+          <li class="nav-item"><a href="adminSettings.html"><i class="fas fa-cog" aria-hidden="true"></i> <span class="nav-text">Settings</span></a></li>
+        </ul>
+
+        <div class="nav-user-info">
+          <span class="nav-welcome-text">Welcome,</span>
+          <span class="nav-admin-name" id="adminNameDisplay">Admin</span>
+          <button id="headerLogoutBtn" class="nav-logout-btn" title="Logout">
+            <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+        
+        <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+          <i class="fas fa-bars" aria-hidden="true"></i>
+        </button>
+      </div>
+    </nav>
+
+    <main class="main-content" role="main">
+
+      <div class="content">
+        <section id="orders-page" class="page-section" aria-labelledby="orders-heading">
+          <div class="card">
+            <header class="card-header">
+              <div class="action-bar">
+                <div class="section-header">
+                  <h2 id="orders-heading" class="no-margin">Order Management</h2>
+                  <p class="section-description">
+                    Filter, sort, and manage customer orders and their statuses.
+                  </p>
+                </div>
+
+                <div class="filter-container" role="group" aria-label="Order filters">
+                  <div class="filter-group">
+                    <label for="orderStatusFilter" class="sr-only">Filter by Status</label>
+                    <select id="orderStatusFilter" class="filter-select" aria-label="Filter by status">
+                      <option value="">All</option>
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="processing">Processing</option>
+                      <option value="shipped">Shipped</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="completed">Completed</option>
+                      <option value="cancelled">Cancelled</option>
+                      <option value="refunded">Refunded</option>
+                    </select>
+                  </div>
+                  <div class="filter-group">
+                    <label for="orderArchiveFilter" class="sr-only">Filter by Archive State</label>
+                    <select id="orderArchiveFilter" class="filter-select" aria-label="Filter by archive state">
+                      <option value="active" selected>Active</option>
+                      <option value="archived">Archived</option>
+                      <option value="all">All</option>
+                    </select>
+                  </div>
+                  <div class="filter-group">
+                    <label for="orderSortBy" class="sr-only">Sort Orders</label>
+                    <select id="orderSortBy" class="filter-select" aria-label="Sort orders">
+                      <option value="newest" selected>Newest First</option>
+                      <option value="oldest">Oldest First</option>
+                      <option value="amount-high">Amount: High to Low</option>
+                      <option value="amount-low">Amount: Low to High</option>
+                      <option value="status">Status A-Z</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="search-container">
+                  <div class="search-group">
+                    <label for="orderSearch" class="sr-only">Search Orders</label>
+                    <input
+                      type="text"
+                      id="orderSearch"
+                      class="search-input"
+                      placeholder="Search by order number, customer name, or email..."
+                      aria-label="Search orders"
+                    />
+                  </div>
+                </div>
+
+                <div class="button-group">
+                  <button
+                    id="printOrdersList"
+                    class="btn btn-secondary"
+                    title="Print orders list"
+                    aria-label="Print orders list"
+                    type="button"
+                  >
+                    <i class="fas fa-print" aria-hidden="true"></i>
+                    <span>Print List</span>
+                  </button>
+                  <button
+                    id="exportOrdersBtn"
+                    class="btn btn-info"
+                    title="Export orders to CSV"
+                    aria-label="Export orders to CSV"
+                    type="button"
+                  >
+                    <i class="fas fa-download" aria-hidden="true"></i>
+                    <span>Export</span>
+                  </button>
+                  <button
+                    id="refreshOrders"
+                    class="btn btn-primary"
+                    title="Refresh orders"
+                    aria-label="Refresh orders"
+                    type="button"
+                  >
+                    <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                    <span>Refresh</span>
+                  </button>
+                </div>
+              </div>
+            </header>
+
+            <div class="card-body">
+              <div
+                id="ordersStatusMessage"
+                class="status-message"
+                role="status"
+                aria-live="polite"
+                style="display:none;"
+              ></div>
+
+              <div
+                id="ordersLoadingSpinner"
+                class="loading-spinner"
+                role="status"
+                aria-live="polite"
+                data-text="Loading orders..."
+                aria-label="Loading orders"
+              ></div>
+
+              <div
+                id="orders-empty"
+                class="empty-state"
+                role="status"
+                aria-live="polite"
+                style="display:none;"
+              >
+                <div class="empty-content">
+                  <i class="fa-solid fa-shopping-cart" aria-hidden="true"></i>
+                  <h3>No Orders Found</h3>
+                  <p>No orders match your current filters or no orders exist yet.</p>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table
+                  id="ordersTable"
+                  class="data-table"
+                  role="table"
+                  aria-label="Orders data table"
+                >
+                  <caption class="sr-only">
+                    List of customer orders with details and management actions
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col"><i class="fas fa-receipt" aria-hidden="true"></i> Order ID</th>
+                      <th scope="col"><i class="fas fa-user" aria-hidden="true"></i> Customer</th>
+                      <th scope="col"><i class="fas fa-calendar-alt" aria-hidden="true"></i> Date</th>
+                      <th scope="col"><i class="fas fa-dollar-sign" aria-hidden="true"></i> Total</th>
+                      <th scope="col"><i class="fas fa-info-circle" aria-hidden="true"></i> Status</th>
+                      <th scope="col"><i class="fas fa-cogs" aria-hidden="true"></i> Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    
+                  </tbody>
+                </table>
+              </div>
+
+              <nav
+                id="ordersPagination"
+                class="pagination"
+                role="navigation"
+                aria-label="Order pagination"
+                style="display:none;"
+              ></nav>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/config.js" defer></script>
+  <script src="js/init.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/logout.js" defer></script>
+  <script src="js/admin-top-nav.js"></script>
+  <script src="js/admin_js/darkMode.js" defer></script>
+  <script src="js/admin_js/refresh-utils.js" defer></script>
+  <script src="js/admin_js/admin-utils.js" defer></script>
+  <script src="js/utils/print-utils.js" defer></script>
+  <script src="js/utils/modal-utils.js" defer></script>
+  <script src="js/utils/pagination.js" defer></script>
+  <script src="js/auth-utils.js"></script>
+  <script src="js/admin_js/admin-header.js" defer></script>
+
+  <script src="js/admin_js/adminOrders.js" defer></script>
+
+  <script defer>
+    document.addEventListener('DOMContentLoaded', function () {
+      const btn = document.getElementById('refreshOrders');
+      if (btn) {
+        btn.addEventListener('click', function () {
+          if (window.RefreshUtils?.manager?.trigger) {
+            window.RefreshUtils.manager.trigger('refreshOrders');
+          } else if (typeof window.fetchOrders === 'function') {
+            window.fetchOrders(1);
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

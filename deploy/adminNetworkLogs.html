@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Living Tech - Network Logs</title>
+
+  <link rel="stylesheet" href="css/products.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+  <link rel="stylesheet" href="css/admin-top-nav.css" />
+  <link rel="stylesheet" href="css/modal.css" />
+  <link rel="stylesheet" href="css/components/network-logs.css" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <script>
+    (function() {
+      try {
+        const savedTheme = localStorage.getItem('adminDarkMode');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (savedTheme === null && systemPrefersDark)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {
+        // Silently fail if localStorage is not available
+      }
+    })();
+  </script>
+
+  <noscript>
+    <style>
+      .noscript-banner{background:#222;color:#fff;padding:12px;text-align:center}
+    </style>
+    <div class="noscript-banner" role="status">This page requires JavaScript for live monitoring. Please enable JavaScript.</div>
+  </noscript>
+</head>
+<body>
+  
+  <div class="admin-loading-overlay" id="globalLoadingOverlay" aria-busy="false" aria-hidden="true">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Loading...</p>
+  </div>
+
+  <div class="container">
+    
+    <nav class="admin-top-nav" id="adminTopNav" role="navigation" aria-label="Admin navigation">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <img src="https://res.cloudinary.com/dkx5o5nqk/image/upload/v1759927622/logo_without_background_n42aqy.png" alt="Smart Home Logo" class="nav-logo-img" loading="lazy" />
+          <span class="nav-brand">Smart Living Tech Admin</span>
+        </div>
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="adminHome.html"><i class="fas fa-tachometer-alt" aria-hidden="true"></i> <span class="nav-text">Dashboard</span></a></li>
+          <li class="nav-item"><a href="adminUsers.html"><i class="fas fa-users" aria-hidden="true"></i> <span class="nav-text">Users</span></a></li>
+          <li class="nav-item"><a href="adminProducts.html"><i class="fas fa-box" aria-hidden="true"></i> <span class="nav-text">Products</span></a></li>
+          <li class="nav-item"><a href="adminOrders.html"><i class="fas fa-shopping-cart" aria-hidden="true"></i> <span class="nav-text">Orders</span></a></li>
+          <li class="nav-item"><a href="adminInstallations.html"><i class="fas fa-tools" aria-hidden="true"></i> <span class="nav-text">Installations</span></a></li>
+          <li class="nav-item"><a href="adminCoupons.html"><i class="fas fa-ticket-alt" aria-hidden="true"></i> <span class="nav-text">Coupons</span></a></li>
+          <li class="nav-item active"><a href="adminNetworkLogs.html" aria-current="page"><i class="fas fa-network-wired" aria-hidden="true"></i> <span class="nav-text">Network Logs</span></a></li>
+          <li class="nav-item"><a href="adminSettings.html"><i class="fas fa-cog" aria-hidden="true"></i> <span class="nav-text">Settings</span></a></li>
+        </ul>
+
+        <div class="nav-user-info">
+          <span class="nav-welcome-text">Welcome,</span>
+          <span class="nav-admin-name" id="adminNameDisplay">Admin</span>
+          <button id="headerLogoutBtn" class="nav-logout-btn" title="Logout">
+            <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+        
+        <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+          <i class="fas fa-bars" aria-hidden="true"></i>
+        </button>
+      </div>
+    </nav>
+
+    <main class="main-content" role="main">
+
+      <div class="content">
+        
+        <section class="page-section" aria-labelledby="stats-heading">
+          <div class="card">
+            <header class="card-header">
+              <div class="action-bar">
+                <div class="section-header">
+                  <h2 id="stats-heading" class="no-margin">Log Statistics</h2>
+                  <p class="section-description">Real-time monitoring of system activities and security events.</p>
+                </div>
+                <div class="button-group">
+                  <label class="sr-only" for="timeRangeSelect">Time range</label>
+                  <select id="timeRangeSelect" class="filter-select" aria-label="Select time range">
+                    <option value="1h">Last Hour</option>
+                    <option value="24h" selected>Last 24 Hours</option>
+                    <option value="7d">Last 7 Days</option>
+                    <option value="30d">Last 30 Days</option>
+                  </select>
+                   <button id="refreshStats" class="btn btn-primary" title="Refresh statistics" type="button">
+                     <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                     <span>Refresh</span>
+                   </button>
+            </header>
+            <div class="card-body">
+              <div id="statsErrorState" class="error-state" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Failed to Load Statistics</h3>
+                <p>Unable to fetch log statistics. Please check your connection and try again.</p>
+                <button class="retry-btn" onclick="networkLogsManager.loadStats()">Retry</button>
+              </div>
+              <div class="stats-grid" id="statsGrid">
+                <div class="stat-card info stat-card--clickable" data-card-key="active_users" data-action-active-users="true">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">Active Users</span>
+                    <div class="stat-change">Tap to view details</div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page-section" aria-labelledby="filters-heading">
+          <div class="card">
+            <header class="card-header">
+              <div class="section-header">
+                <h2 id="filters-heading" class="no-margin">Filters &amp; Controls</h2>
+                <p class="section-description">Filter logs by level, category, time range, and other criteria.</p>
+              </div>
+            </header>
+            <div class="card-body">
+              <div class="filters-grid">
+                
+                <div class="filter-group">
+                  <label for="levelFilter">Log Level:</label>
+                  <select id="levelFilter" class="filter-select">
+                    <option value="">All Levels</option>
+                    <option value="info">Info</option>
+                    <option value="warning">Warning</option>
+                    <option value="error">Error</option>
+                    <option value="critical">Critical</option>
+                    <option value="security">Security</option>
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <label for="categoryFilter">Category:</label>
+                  <select id="categoryFilter" class="filter-select">
+                    <option value="">All Categories</option>
+                    <option value="auth">Authentication</option>
+                    <option value="user_management">User Management</option>
+                    <option value="product_management">Product Management</option>
+                    <option value="order_management">Order Management</option>
+                    <option value="payment">Payment</option>
+                    <option value="cart">Cart</option>
+                    <option value="api_access">API Access</option>
+                    <option value="system">System</option>
+                    <option value="security">Security</option>
+                    <option value="admin_action">Admin Action</option>
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <label for="userRoleFilter">User Role:</label>
+                  <select id="userRoleFilter" class="filter-select">
+                    <option value="">All Roles</option>
+                    <option value="guest">Guest</option>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <label for="severityFilter">Min Severity:</label>
+                  <select id="severityFilter" class="filter-select">
+                    <option value="">All</option>
+                    <option value="1">1 - Low</option>
+                    <option value="2">2 - Medium</option>
+                    <option value="3">3 - High</option>
+                    <option value="4">4 - Critical</option>
+                    <option value="5">5 - Emergency</option>
+                  </select>
+                </div>
+
+                <div class="filter-group filter-group-date-range">
+                  <label><i class="fas fa-calendar-alt"></i> Date Range</label>
+                  <div class="date-range-inputs">
+                    <div class="date-input-wrapper">
+                      <input type="date" id="dateFrom" class="filter-input date-input" placeholder="Start date" />
+                      <input type="time" id="timeFrom" class="filter-input time-input" value="00:00" />
+                    </div>
+                    <span class="date-separator">to</span>
+                    <div class="date-input-wrapper">
+                      <input type="date" id="dateTo" class="filter-input date-input" placeholder="End date" />
+                      <input type="time" id="timeTo" class="filter-input time-input" value="23:59" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="filter-group">
+                  <label for="logIdFilter">Log ID:</label>
+                  <input type="text" id="logIdFilter" class="filter-input" placeholder="e.g., 25A-001" />
+                </div>
+
+                <div class="filter-group">
+                  <label for="ipVersionFilter">IP Version:</label>
+                  <select id="ipVersionFilter" class="filter-select">
+                    <option value="">Any</option>
+                    <option value="ipv4">IPv4</option>
+                    <option value="ipv6">IPv6</option>
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <label for="requestIdFilter">Request ID:</label>
+                  <input type="text" id="requestIdFilter" class="filter-input" placeholder="Paste request UUID" />
+                </div>
+                <div class="filter-actions">
+                  <button id="applyFilters" class="action-btn primary" type="button">
+                    <i class="fas fa-filter" aria-hidden="true"></i>
+                    <span>Apply Filters</span>
+                  </button>
+                  <button id="clearFilters" class="action-btn secondary" type="button">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                    <span>Clear All</span>
+                  </button>
+                  <button id="exportLogs" class="action-btn export" type="button">
+                    <i class="fas fa-download" aria-hidden="true"></i>
+                    <span>Export CSV</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page-section" aria-labelledby="logs-heading">
+          <div class="card">
+            <header class="card-header">
+              <div class="action-bar">
+                <div class="section-header">
+                  <h2 id="logs-heading" class="no-margin">Network Logs</h2>
+                  <p class="section-description">Detailed view of all system activities and events.</p>
+                </div>
+                <div class="button-group">
+                  <button id="refreshLogs" class="btn btn-primary" title="Refresh logs" type="button">
+                    <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                    <span>Refresh</span>
+                  </button>
+                  <button id="toggleRealtime" class="action-btn toggle-realtime" title="Toggle real-time updates" type="button">
+                    <i class="fas fa-play" aria-hidden="true"></i>
+                    <span>Real-time</span>
+                  </button>
+                  <button id="cleanupOldLogs" class="action-btn delete-btn" title="Clean up old logs" type="button">
+                    <i class="fas fa-trash" aria-hidden="true"></i>
+                    <span class="action-text">Cleanup</span>
+                  </button>
+                </div>
+              </div>
+            </header>
+            <div class="card-body">
+              
+              <div id="logsErrorState" class="error-state" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Failed to Load Logs</h3>
+                <p>Unable to fetch network logs. Please check your connection and try again.</p>
+                <button class="retry-btn" onclick="networkLogsManager.loadLogs()">Retry</button>
+              </div>
+
+              <div id="logsEmptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-search"></i>
+                <h3>No Logs Found</h3>
+                <p>No network logs match your current filters. Try adjusting your search criteria.</p>
+              </div>
+
+              <div class="pagination-info" id="paginationInfo" role="status" aria-live="polite" style="display: none;"></div>
+
+              <div class="logs-container" id="logsContainer">
+                <table class="logs-table" id="logsTable">
+                  <caption class="sr-only">Network log entries with filtering and sorting capabilities</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col" data-sort="logId">Log ID</th>
+                      <th scope="col" data-sort="timestamp">Timestamp</th>
+                      <th scope="col" data-sort="level">Level</th>
+                      <th scope="col" data-sort="category">Category</th>
+                      <th scope="col" data-sort="event">Event</th>
+                      <th scope="col" data-sort="userRole">User</th>
+                      <th scope="col" data-sort="ipAddress">IP Address</th>
+                      <th scope="col" data-sort="statusCode">Status</th>
+                      <th scope="col" data-sort="responseTime">Response Time</th>
+                      <th scope="col" data-sort="requestId">Request ID</th>
+                      <th scope="col" data-sort="severity">Severity</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="logsTableBody">
+                    
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="pagination-controls pagination" id="paginationControls" data-info-id="paginationInfo" aria-label="Pagination controls" style="display: none;"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="logDetailsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="logDetailsTitle" tabindex="-1" hidden>
+    <div class="modal-content" role="document">
+      <div class="modal-header">
+        <h3 id="logDetailsTitle">Log Details</h3>
+        <button class="modal-close" id="closeLogModal" aria-label="Close" type="button">&times;</button>
+      </div>
+      <div class="modal-body" id="logDetailsContent"></div>
+    </div>
+  </div>
+
+  <div id="activeUsersModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="activeUsersTitle" tabindex="-1" hidden>
+    <div class="modal-content" role="document">
+      <div class="modal-header">
+        <h3 id="activeUsersTitle">Active Users</h3>
+        <button class="modal-close" id="closeActiveUsersModal" aria-label="Close" type="button">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="activeUsersError" class="error-state" hidden>
+          <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+          <h3>Unable to load active users</h3>
+          <p>Please try again or adjust your filters.</p>
+          <button id="retryActiveUsers" class="action-btn secondary" type="button">Retry</button>
+        </div>
+        <div id="activeUsersEmpty" class="empty-state" hidden>
+          <i class="fas fa-users-slash" aria-hidden="true"></i>
+          <h3>No Active Users</h3>
+          <p>No user activity detected within the selected timeframe.</p>
+        </div>
+        <div id="activeUsersContent" hidden>
+          <div class="active-users-summary" id="activeUsersSummary"></div>
+          <div class="active-users-list" id="activeUsersList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="uniqueIPsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="uniqueIPsTitle" tabindex="-1" hidden>
+    <div class="modal-content" role="document">
+      <div class="modal-header">
+        <h3 id="uniqueIPsTitle">Unique IP Addresses</h3>
+        <button class="modal-close" id="closeUniqueIPsModal" aria-label="Close" type="button">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="uniqueIPsError" class="error-state" hidden>
+          <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+          <h3>Unable to load unique IPs</h3>
+          <p>Please try again or adjust your filters.</p>
+          <button id="retryUniqueIPs" class="action-btn secondary" type="button">Retry</button>
+        </div>
+        <div id="uniqueIPsEmpty" class="empty-state" hidden>
+          <i class="fas fa-network-wired" aria-hidden="true"></i>
+          <h3>No Unique IPs</h3>
+          <p>No IP addresses detected within the selected timeframe.</p>
+        </div>
+        <div id="uniqueIPsContent" hidden>
+          <div class="unique-ips-summary" id="uniqueIPsSummary"></div>
+          <div class="unique-ips-actions">
+            <button id="clearIPHistory" class="action-btn danger" type="button" title="Clear IP history older than 24 hours">
+              <i class="fas fa-trash" aria-hidden="true"></i>
+              <span>Clear IP History</span>
+            </button>
+          </div>
+          <div class="unique-ips-list" id="uniqueIPsList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="cleanupModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="cleanupTitle" tabindex="-1" hidden>
+    <div class="modal-content" role="document">
+      <div class="modal-header">
+        <h3 id="cleanupTitle">Clean Up Old Logs</h3>
+        <button class="modal-close" id="closeCleanupModal" aria-label="Close" type="button">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>This will permanently delete logs older than the specified number of days (excluding critical and security logs).</p>
+        <div class="form-group">
+          <label for="cleanupDays">Delete logs older than (days):</label>
+          <input type="number" id="cleanupDays" value="90" min="1" max="365" />
+        </div>
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="includeProtectedLogs" />
+          <label for="includeProtectedLogs">Include critical and security logs (use caution)</label>
+        </div>
+        <p class="form-helper" role="note">Critical and security logs are preserved by default to maintain incident history.</p>
+        <div class="modal-actions">
+          <button id="confirmCleanup" class="action-btn danger" type="button">Confirm Cleanup</button>
+          <button id="cancelCleanup" class="action-btn secondary" type="button">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="clearIPHistoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="clearIPHistoryTitle" tabindex="-1" hidden>
+    <div class="modal-content" role="document">
+      <div class="modal-header">
+        <h3 id="clearIPHistoryTitle">Clear IP History</h3>
+        <button class="modal-close" id="closeClearIPHistoryModal" aria-label="Close" type="button">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="warning-message">
+          <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+          <p><strong>Warning:</strong> This action will permanently delete all network logs older than 24 hours.</p>
+        </div>
+        <div class="info-message">
+          <i class="fas fa-info-circle" aria-hidden="true"></i>
+          <p>This will help manage IP history by removing older entries while preserving recent activity data.</p>
+        </div>
+        <div class="preservation-notice">
+          <h4>What will be preserved:</h4>
+          <ul>
+            <li>All logs from the last 24 hours</li>
+            <li>Critical and security logs (regardless of age)</li>
+            <li>Current active user sessions</li>
+          </ul>
+        </div>
+        <div class="modal-actions">
+          <button id="confirmClearIPHistory" class="action-btn danger" type="button">Clear IP History</button>
+          <button id="cancelClearIPHistory" class="action-btn secondary" type="button">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/auth-utils.js"></script>
+  <script src="js/admin_js/admin-header.js"></script>
+  <script src="js/admin_js/darkMode.js"></script>
+  <script src="js/utils/pagination.js"></script>
+  <script src="js/admin_js/refresh-utils.js"></script>
+  <script src="js/admin_js/adminNetworkLogs.js"></script>
+</body>
+</html>

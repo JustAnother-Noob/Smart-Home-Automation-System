@@ -1,0 +1,120 @@
+
+
+body {
+  font-family: var(--font-family-primary);
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  color: var(--gray-700);
+  margin-bottom: var(--spacing-md);
+  font-family: var(--font-family-secondary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.terms {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+}
+
+.terms label {
+  font-weight: var(--font-weight-normal);
+  margin-bottom: 0;
+  cursor: pointer;
+  line-height: var(--line-height-normal);
+}
+
+.terms input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.terms a {
+  color: var(--primary-blue);
+  text-decoration: none;
+}
+
+.terms a:hover {
+  text-decoration: underline;
+}
+
+.google-signin-container {
+  margin-bottom: var(--spacing-sm);
+  display: flex;
+  justify-content: center;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: var(--spacing-sm);
+  color: var(--gray-600);
+}
+
+.login-link a {
+  color: var(--primary-blue);
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+.discount-banner {
+  width: 100%;
+  max-width: 800px;
+  margin: var(--spacing-sm) auto 0;
+  text-align: center;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.voucher-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.signup-top-image {
+  display: flex;
+  justify-content: center;
+  margin: var(--spacing-sm) 0;
+}
+.signup-top-image img {
+  width: 100%;
+  max-width: 920px; 
+  height: auto;
+  display: block;
+  margin: 0 auto; 
+  border-radius: 8px; 
+  box-shadow: var(--shadow); 
+}
+
+.g-recaptcha {
+  margin: var(--spacing-xs) 0;
+  transform-origin: left top;
+}
+
+@media (max-width: 768px) {
+  .discount-banner {
+    margin: var(--spacing-xs) var(--spacing-sm) 0;
+    border-radius: var(--radius-sm);
+  }
+  
+  .g-recaptcha {
+    transform: scale(0.85);
+  }
+}
+
+.password-strength-meter,
+.password-strength-text {
+  display: none;
+}

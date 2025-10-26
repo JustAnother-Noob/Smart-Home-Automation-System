@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Installation Booked - Smart Living Tech</title>
+  <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/layout/user_navbar.css">
+  <link rel="stylesheet" href="css/layout/user_footer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+
+  <style>
+    .success-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      text-align: center;
+    }
+    
+    .success-icon {
+      font-size: 4rem;
+      color: #10b981;
+      margin-bottom: 2rem;
+      animation: scaleIn 0.5s ease;
+    }
+    
+    @keyframes scaleIn {
+      from {
+        transform: scale(0);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    
+    .success-title {
+      font-size: 2.5rem;
+      color: #1f2937;
+      margin-bottom: 1rem;
+    }
+    
+    .success-message {
+      font-size: 1.2rem;
+      color: #6b7280;
+      margin-bottom: 3rem;
+      line-height: 1.6;
+    }
+    
+    .installation-details {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 3rem;
+      text-align: left;
+    }
+    
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+    
+    .detail-label {
+      font-weight: 500;
+      color: #374151;
+    }
+    
+    .detail-value {
+      color: #1f2937;
+      font-weight: 600;
+      text-align: right;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 0.75rem 2rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+    
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+      border: 1px solid #d1d5db;
+    }
+    
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .info-box {
+      background: #eff6ff;
+      border: 1px solid #3b82f6;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      text-align: left;
+    }
+
+    .info-box-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .info-box-header i {
+      color: #3b82f6;
+    }
+
+    .info-box-header strong {
+      color: #1e40af;
+      font-size: 1.1rem;
+    }
+
+    .info-box p {
+      margin: 0.5rem 0;
+      color: #1e40af;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .info-box ul {
+      margin: 0.5rem 0;
+      padding-left: 1.5rem;
+      color: #1e40af;
+    }
+
+    .info-box li {
+      margin: 0.5rem 0;
+    }
+
+    .payment-note {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      text-align: left;
+    }
+
+    .payment-note strong {
+      color: #856404;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .payment-note p {
+      margin: 0;
+      color: #856404;
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+      .success-container {
+        padding: 1rem;
+      }
+      
+      .success-title {
+        font-size: 2rem;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+      
+      .btn {
+        justify-content: center;
+        width: 100%;
+      }
+
+      .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .detail-value {
+        text-align: left;
+      }
+    }
+  </style>
+
+  <script src="js/loadNav.js"></script>
+</head>
+<body>
+  
+  <div id="navbar"></div>
+
+  <main class="success-container">
+    <div id="success-content">
+      <div class="success-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      
+      <h1 class="success-title">Installation Booked Successfully!</h1>
+      
+      <p class="success-message">
+        Your installation has been scheduled and we've sent a confirmation email with all the details. Our team will contact you within 24-48 hours to confirm the appointment.
+      </p>
+      
+      <div class="installation-details">
+        <div class="detail-row">
+          <span class="detail-label">Order Number:</span>
+          <span class="detail-value" id="order-number">Loading...</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Customer Name:</span>
+          <span class="detail-value" id="customer-name">Loading...</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Installation Date:</span>
+          <span class="detail-value" id="installation-date">Loading...</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Installation Address:</span>
+          <span class="detail-value" id="installation-address">Loading...</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Contact Number:</span>
+          <span class="detail-value" id="contact-number">Loading...</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Status:</span>
+          <span class="detail-value" id="status" style="color: #f59e0b; text-transform: capitalize;">Pending Confirmation</span>
+        </div>
+      </div>
+
+      <div class="payment-note">
+        <strong>
+          <i class="fas fa-info-circle"></i>
+          Payment Information
+        </strong>
+        <p>
+          The final installation cost will be calculated after our technician visits your site and assesses the requirements. You will be informed of the cost before any work begins.
+        </p>
+      </div>
+
+      <div class="info-box">
+        <div class="info-box-header">
+          <i class="fas fa-envelope"></i>
+          <strong>Check Your Email</strong>
+        </div>
+        <p>
+          We've sent a detailed installation confirmation to <strong id="customer-email">your email address</strong>. If you don't see it in your inbox, please check your spam folder.
+        </p>
+      </div>
+
+      <div class="info-box">
+        <div class="info-box-header">
+          <i class="fas fa-calendar-check"></i>
+          <strong>What Happens Next?</strong>
+        </div>
+        <ul>
+          <li>Our team will contact you within 24-48 hours to confirm your installation appointment</li>
+          <li>A technician will visit your site to assess the installation requirements</li>
+          <li>You'll receive a cost estimate before any work begins</li>
+          <li>Installation will be scheduled at your convenience</li>
+        </ul>
+      </div>
+      
+    </div>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="js/cart.js"></script>
+  
+  <script>
+    const CONFIG = {
+      API_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:5002/api' 
+        : '/api'
+    };
+
+    // Load navbar and footer
+    Promise.all([
+      fetch("./user_nav.html").then(r => r.text()),
+      fetch("./user_footer.html").then(r => r.text())
+    ]).then(([navbarHTML, footerHTML]) => {
+      document.getElementById("navbar").innerHTML = navbarHTML;
+      document.getElementById("footer").innerHTML = footerHTML;
+      
+      // Load navbar JavaScript after HTML is inserted
+      const userNavScript = document.createElement('script');
+      userNavScript.src = '../js/user/user_nav.js';
+      userNavScript.defer = true;
+      document.body.appendChild(userNavScript);
+      
+      // Initialize navbar after it's loaded
+      if (typeof initializeNavbar === 'function') {
+        initializeNavbar();
+      }
+    }).catch(error => {
+      console.error("Error loading components:", error);
+    });
+
+    // Get installation data from URL params or sessionStorage
+    function getInstallationData() {
+      // Try to get from sessionStorage first (set by the booking page)
+      const storedData = sessionStorage.getItem('installationSuccess');
+      if (storedData) {
+        const data = JSON.parse(storedData);
+        sessionStorage.removeItem('installationSuccess'); // Clear after reading
+        return data;
+      }
+      
+      // Fallback: try URL params
+      const urlParams = new URLSearchParams(window.location.search);
+      return {
+        orderNumber: urlParams.get('orderNumber') || 'N/A',
+        customerName: urlParams.get('customerName') || 'N/A',
+        customerEmail: urlParams.get('email') || 'N/A',
+        installationDate: urlParams.get('date') || 'N/A',
+        address: urlParams.get('address') || 'N/A',
+        contactNumber: urlParams.get('phone') || 'N/A'
+      };
+    }
+
+    // Populate the page with installation data
+    function displayInstallationDetails() {
+      const data = getInstallationData();
+      
+      // Update all fields
+      document.getElementById('order-number').textContent = data.orderNumber;
+      document.getElementById('customer-name').textContent = data.customerName;
+      document.getElementById('customer-email').textContent = data.customerEmail;
+      document.getElementById('contact-number').textContent = data.contactNumber;
+      document.getElementById('installation-address').textContent = data.address;
+      
+      // Format the date
+      if (data.installationDate && data.installationDate !== 'N/A') {
+        try {
+          const date = new Date(data.installationDate);
+          const formattedDate = date.toLocaleDateString('en-AU', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          document.getElementById('installation-date').textContent = formattedDate;
+        } catch (error) {
+          document.getElementById('installation-date').textContent = data.installationDate;
+        }
+      } else {
+        document.getElementById('installation-date').textContent = 'N/A';
+      }
+    }
+
+    // Initialize page
+    window.addEventListener('DOMContentLoaded', () => {
+      displayInstallationDetails();
+    });
+  </script>
+</body>
+</html>

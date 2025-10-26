@@ -1,0 +1,11 @@
+{
+  "name": "smart-living-tech",
+  "version": "1.0.0",
+  "description": "Smart Living Tech",
+  "scripts": {
+    "start": "cd backend && npm install && npm start"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}

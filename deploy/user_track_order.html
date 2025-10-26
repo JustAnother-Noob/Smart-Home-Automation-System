@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Order - Smart Living Tech</title>
+    <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+
+    <style>
+      /* Prevent layout shift during loading */
+      * { box-sizing: border-box; }
+      body { 
+        margin: 0; 
+        padding: 0; 
+        font-family: 'Inter', sans-serif; 
+        background-color: #ffffff;
+        overflow-x: hidden;
+      }
+      html { scroll-behavior: smooth; }
+      #navbar { 
+        min-height: 85px; 
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: white;
+      }
+      main { 
+        opacity: 0; 
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      main.loaded { 
+        opacity: 1; 
+        visibility: visible;
+      }
+      /* Prevent container blinking/flashing */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        box-sizing: border-box;
+      }
+      .track-order-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        box-sizing: border-box;
+      }
+      /* Hide banners initially to prevent blinking - show them last */
+      .shipping-banner, .promo-banner, .info-banner, .info-banner-small {
+        box-sizing: border-box;
+        width: 100%;
+        position: relative;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      .info-banner-icon, .info-banner-content, .info-banner-actions {
+        box-sizing: border-box;
+        position: relative;
+      }
+      /* Show banners after everything else is loaded */
+      .banners-loaded .shipping-banner,
+      .banners-loaded .promo-banner,
+      .banners-loaded .info-banner,
+      .banners-loaded .info-banner-small {
+        opacity: 1;
+        visibility: visible;
+      }
+      /* Prevent breadcrumb blinking */
+      #breadcrumb-root, .breadcrumb, .breadcrumb-nav {
+        box-sizing: border-box;
+        width: 100%;
+        position: relative;
+        min-height: 24px;
+        margin: 0;
+        padding: 8px 0;
+      }
+      /* Prevent content flash */
+      .track-order-container, .order-timeline, .order-details {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+      }
+      main.loaded .track-order-container,
+      main.loaded .order-timeline,
+      main.loaded .order-details {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/layout/user_navbar.css">
+    <link rel="stylesheet" href="css/pages/user_track_order.css">
+    <link rel="stylesheet" href="css/layout/user_footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+
+  <script src="js/loadNav.js"></script>
+</head>
+<body>
+
+    <div id="navbar"></div>
+
+    <main class="track-order-container">
+        
+        <div id="breadcrumb-root" data-breadcrumb-current="Track Order"></div>
+        <script src="js/components/breadcrumb-loader.js" defer></script>
+
+        <div class="search-section">
+            <div class="guest-prompt" id="guest-prompt" role="region" aria-label="Sign in notice">
+                <div class="info-banner">
+                    <div class="info-banner-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="info-banner-content">
+                        <h3>Want to see your complete order history?</h3>
+                        <p>Sign in to access all your orders, faster tracking, and personalized support.</p>
+                    </div>
+                    <div class="info-banner-actions">
+                        <a href="user_login.html" class="btn secondary-btn"><i class="fas fa-sign-in-alt"></i> Log in</a>
+                        <a href="user_signup.html" class="btn primary-btn"><i class="fas fa-user-plus"></i> Sign up</a>
+                    </div>
+                </div>
+            </div>
+            <div class="search-card">
+                <div class="search-card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h2>Track Your Order</h2>
+                </div>
+                <p class="card-description">Enter your order ID to get instant tracking updates</p>
+                <div class="search-form">
+                    <div class="input-group">
+                        <input type="text" id="order-search-input" placeholder="Enter Order ID (e.g., ORD-12345)" maxlength="50" aria-label="Order ID">
+                        <button type="button" id="search-order-btn" class="btn primary-btn">
+                            <i class="fas fa-search"></i> Track Order
+                        </button>
+                    </div>
+                    <div class="search-help">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Find your Order ID in the confirmation email we sent you</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="results-section" id="results-section" style="display: none;">
+            
+            <div id="loading-state" class="loading-state" style="display: none;">
+                <div class="spinner"></div>
+                <p>Searching for your order...</p>
+            </div>
+
+            <div id="guest-results" class="guest-results" style="display: none;">
+                <div class="order-details-card">
+                    
+                </div>
+            </div>
+
+            <div id="user-orders" class="user-orders" style="display: none;">
+                <div class="orders-header">
+                    <h2><i class="fas fa-list"></i> Your Orders</h2>
+                </div>
+                <div class="orders-list" id="orders-list">
+                    
+                </div>
+                <div class="pagination" id="pagination" style="display: none;">
+                    
+                </div>
+            </div>
+
+            <div id="no-results" class="no-results" style="display: none;">
+                <div class="no-results-content">
+                    <h3 id="no-results-title">Order Not Found</h3>
+                    <p id="no-results-message">We couldn't find an order with that ID. Please check your Order ID and try again.</p>
+
+                    <div class="support-card support-inline">
+                        <div class="support-content">
+                            <h4>Need Help?</h4>
+                            <p>If you have questions about your order or need assistance, we're here to help.</p>
+                            <div class="support-options">
+                                <a href="mailto:smartlivingtech0@gmail.com" class="support-link btn secondary-btn">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>smartlivingtech0@gmail.com</span>
+                                </a>
+                                <span class="support-divider">or</span>
+                                <a href="user_contact.html" class="support-link btn primary-btn">
+                                    <i class="fas fa-comment-alt"></i>
+                                    <span>Visit Contact Page</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="error-state" class="error-state" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Something went wrong</h3>
+                    <p id="error-message">Unable to search for orders right now. Please try again later.</p>
+                    <button type="button" id="retry-btn" class="btn secondary-btn">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="footer"></div>
+    <script>
+        fetch("./user_footer.html").then(r=>r.text()).then(html=>{
+            document.getElementById("footer").innerHTML = html;
+        });
+    </script>
+
+    <div id="order-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Order Details</h2>
+                <button class="close-modal-btn" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <script src="js/cart.js"></script>
+    <script src="js/user/user_track_order.js" defer></script>
+
+    <script>
+      // Prevent FOUC by ensuring content loads smoothly
+      document.addEventListener('DOMContentLoaded', function() {
+        // Wait for navbar and breadcrumbs to be loaded first
+        const checkComponents = setInterval(() => {
+          const navbar = document.getElementById('navbar');
+          const breadcrumb = document.getElementById('breadcrumb-root');
+          
+          // Check if navbar is loaded (required)
+          const navbarLoaded = navbar && navbar.children.length > 0;
+          
+          // Check if breadcrumb is loaded (optional - some pages don't have breadcrumbs)
+          const breadcrumbLoaded = !breadcrumb || breadcrumb.children.length > 0;
+          
+          if (navbarLoaded && breadcrumbLoaded) {
+            clearInterval(checkComponents);
+            
+            // Then show main content
+            setTimeout(() => {
+              const main = document.querySelector('main');
+              if (main) {
+                main.classList.add('loaded');
+                // Remove the loading overlay if it exists
+                const overlay = document.getElementById('nav-loading-overlay');
+                if (overlay) {
+                  overlay.style.opacity = '0';
+                  setTimeout(() => overlay.remove(), 300);
+                }
+                
+                // Show banners LAST after everything else is loaded
+                setTimeout(() => {
+                  document.body.classList.add('banners-loaded');
+                }, 300);
+              }
+            }, 200);
+          }
+        }, 50);
+        
+        // Fallback: show content after max 2 seconds
+        setTimeout(() => {
+          const main = document.querySelector('main');
+          if (main && !main.classList.contains('loaded')) {
+            main.classList.add('loaded');
+          }
+          // Show banners in fallback too
+          if (!document.body.classList.contains('banners-loaded')) {
+            document.body.classList.add('banners-loaded');
+          }
+        }, 2000);
+      });
+    </script>
+</body>
+</html>

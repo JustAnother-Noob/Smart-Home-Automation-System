@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login Test - Smart Home Automation</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: #f5f5f5; 
+        }
+        .container { 
+            max-width: 500px; 
+            margin: 50px auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+        h1 { 
+            text-align: center; 
+            color: #333; 
+            margin-bottom: 30px; 
+        }
+        .form-group { 
+            margin: 20px 0; 
+        }
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: bold; 
+            color: #555; 
+        }
+        input[type="email"], input[type="password"] { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+        }
+        button { 
+            width: 100%; 
+            background: #007bff; 
+            color: white; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 4px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            margin-top: 10px; 
+        }
+        button:hover { 
+            background: #0056b3; 
+        }
+        button:disabled { 
+            background: #ccc; 
+            cursor: not-allowed; 
+        }
+        .result { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border-radius: 4px; 
+            display: none; 
+        }
+        .success { 
+            background: #d4edda; 
+            border: 1px solid #c3e6cb; 
+            color: #155724; 
+        }
+        .error { 
+            background: #f8d7da; 
+            border: 1px solid #f5c6cb; 
+            color: #721c24; 
+        }
+        .info { 
+            background: #d1ecf1; 
+            border: 1px solid #bee5eb; 
+            color: #0c5460; 
+        }
+        .credentials { 
+            background: #fff3cd; 
+            border: 1px solid #ffeaa7; 
+            color: #856404; 
+            padding: 15px; 
+            border-radius: 4px; 
+            margin-bottom: 20px; 
+        }
+        .credentials h3 { 
+            margin-top: 0; 
+        }
+        .credentials code { 
+            background: #f8f9fa; 
+            padding: 2px 6px; 
+            border-radius: 3px; 
+            font-family: monospace; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Admin Login Test</h1>
+        
+        <div class="credentials">
+            <h3>Test Credentials:</h3>
+            <p><strong>Email:</strong> <code>admin@smarthome.com</code></p>
+            <p><strong>Password:</strong> <code>Admin123!</code></p>
+            <p><em>Or try: admin@test.com / Admin@123456</em></p>
+        </div>
+
+        <form id="adminLoginForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" value="admin@smarthome.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" value="Admin123!" required>
+            </div>
+            
+            <button type="submit" id="loginBtn">Test Admin Login</button>
+        </form>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // Environment configuration
+        const CONFIG = {
+            API_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                ? 'http://127.0.0.1:5002/api' 
+                : '/api'
+        };
+
+        // Login form handler
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Testing Login...';
+            resultDiv.style.display = 'none';
+            
+            try {
+                // Test backend connectivity first
+                resultDiv.className = 'result info';
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = '🔄 Testing backend connectivity...';
+                
+                const healthResponse = await fetch(`${CONFIG.API_URL}/auth/health`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (!healthResponse.ok) {
+                    throw new Error(`Backend not reachable: ${healthResponse.status}`);
+                }
+                
+                resultDiv.innerHTML = '✅ Backend connected. Attempting login...';
+                
+                // Attempt login
+                const loginResponse = await fetch(`${CONFIG.API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        email: email.trim().toLowerCase(),
+                        password: password,
+                        recaptchaToken: 'dev-mode-skip' // Skip reCAPTCHA in development
+                    })
+                });
+                
+                const loginData = await loginResponse.json();
+                
+                if (loginResponse.ok && loginData.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Login Successful!</h3>
+                        <p><strong>User:</strong> ${loginData.data.user.firstName} ${loginData.data.user.lastName}</p>
+                        <p><strong>Email:</strong> ${loginData.data.user.email}</p>
+                        <p><strong>Role:</strong> ${loginData.data.user.role}</p>
+                        <p><strong>Redirect:</strong> ${loginData.data.redirect}</p>
+                        <p><strong>Token:</strong> ${loginData.data.token.substring(0, 20)}...</p>
+                        <br>
+                        <button onclick="window.location.href='${loginData.data.redirect}'" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+                            Go to Admin Dashboard
+                        </button>
+                    `;
+                    
+                    // Store token for future use
+                    localStorage.setItem('authToken', loginData.data.token);
+                    localStorage.setItem('userRole', loginData.data.user.role);
+                    localStorage.setItem('userEmail', loginData.data.user.email);
+                    localStorage.setItem('userFirstName', loginData.data.user.firstName);
+                    localStorage.setItem('userLastName', loginData.data.user.lastName);
+                    
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Login Failed</h3>
+                        <p><strong>Status:</strong> ${loginResponse.status}</p>
+                        <p><strong>Error:</strong> ${loginData.message || 'Unknown error'}</p>
+                        <p><strong>Error Type:</strong> ${loginData.errorType || 'N/A'}</p>
+                        <pre>${JSON.stringify(loginData, null, 2)}</pre>
+                    `;
+                }
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p>Make sure the backend server is running on port 5002</p>
+                `;
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Test Admin Login';
+            }
+        });
+    </script>
+</body>
+</html>
